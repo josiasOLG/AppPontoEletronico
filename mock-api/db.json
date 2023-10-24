@@ -1,0 +1,46 @@
+{
+  "motoristas": [
+    {
+      "Id": "1",
+      "Data": "2021-01-01",
+      "HoraInicio": "08:00",
+      "HoraFim": "16:00",
+      "EhFolga": 0,
+      "DiaFinalizado": 0,
+      "MotoristaId": "1",
+      "EmployeePerimetroId": "3",
+      "Descricao": "Descrição do motorista 2000",
+      "DateCreated": "2021-01-01",
+      "DateUpdated": null,
+      "DateDeleted": null
+    },
+    {
+      "Id": "2",
+      "Data": "2020-05-15",
+      "HoraInicio": "09:00",
+      "HoraFim": "17:00",
+      "EhFolga": 0,
+      "DiaFinalizado": 0,
+      "MotoristaId": "3",
+      "EmployeePerimetroId": "2",
+      "Descricao": "Descrição do motorista 10000",
+      "DateCreated": "2020-05-15",
+      "DateUpdated": null,
+      "DateDeleted": null
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "username": "josias",
+      "senha": "123",
+      "email": "josias@example.com"
+    },
+    {
+      "id": 2,
+      "username": "mariaoliveira",
+      "senha": "senha456",
+      "email": "maria.oliveira@example.com"
+    }
+  ]
+}

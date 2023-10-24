@@ -1,0 +1,6 @@
+{
+  "/api/v1/motoristas/:id": "/motoristas/:id",
+  "/api/v1/motoristas": "/motoristas",
+  "/api/v1/users/:id": "/users/:id",
+  "/api/v1/users": "/users"
+}
