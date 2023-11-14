@@ -9,7 +9,7 @@
       "DiaFinalizado": 0,
       "MotoristaId": "1",
       "EmployeePerimetroId": "3",
-      "Descricao": "Descrição do motorista 2000",
+      "Descricao": "Descrição do motorista 200",
       "DateCreated": "2021-01-01",
       "DateUpdated": null,
       "DateDeleted": null
@@ -29,7 +29,7 @@
       "DateDeleted": null
     }
   ],
-  "users": [
+  "CheckCredentials": [
     {
       "id": 1,
       "username": "josias",

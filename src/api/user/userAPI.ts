@@ -1,12 +1,13 @@
 import ApiBase from "../ApiBase";
 import UserDTO from "../dtos/UserDTO";
-import UserWithoutPasswordDTO from "../dtos/UserWithoutPasswordDTO";
+import Constants from 'expo-constants';
+const environment = Constants.expoConfig?.extra?.environment ?? 'valorPadrao';
 
 export default class UserAPI extends ApiBase {
   private static instance: UserAPI;
 
   private constructor() {
-    super("/users");
+    super("/Login/CheckCredentials");
   }
 
   public static getInstance(): UserAPI {
@@ -21,15 +22,11 @@ export default class UserAPI extends ApiBase {
   }
 
   public async login(username: string, password: string): Promise<UserDTO> {
-    if (process.env.ENVIRONMENT == "localhost") {
-      return this.loginLocal(username, password);
-    } else {
-      const loginData = {
-        username,
-        password,
-      };
-      return this.post<typeof loginData, UserDTO>("/users", loginData);
-    }
+    const loginData = {
+      Login: username,
+      PasswordHash: password,
+    };
+    return this.post<typeof loginData, UserDTO>("", loginData);
   }
 
   public async loginLocal(
@@ -38,12 +35,12 @@ export default class UserAPI extends ApiBase {
   ): Promise<UserDTO> {
     const allUsers: UserDTO[] = await this.get<UserDTO[]>("");
     const user = allUsers.find(
-      (u) => u.username === username && u.senha === password
+      (u) => u.Login === username && u.PasswordHash === password
     );
     if (!user) {
       throw new Error("Usuário ou senha inválido");
     }
-    const { senha, ...userWithoutPassword } = user;
+    const { PasswordHash, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }
 }

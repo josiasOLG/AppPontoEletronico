@@ -35,7 +35,7 @@ export default function App() {
   const [hasLoggedInBefore, setHasLoggedInBefore] = useState(false);
 
   const globalErrorHandler = (error: any, isFatal: any) => {
-    console.log("Erro capturado globalmente:", error, isFatal);
+    // console.log("Erro capturado globalmente:", error, isFatal);
     logError(
       isFatal ? "Fatal Error" : "Non-Fatal Error",
       error.message,
@@ -72,7 +72,7 @@ export default function App() {
     };
     const setupDatabase = async () => {
       await initDatabases();
-      await syncData();
+      // await syncData();
     };
 
     setupDatabase();

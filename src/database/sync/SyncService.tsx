@@ -1,72 +1,126 @@
+import { getCurrentMonthFirstDay } from "../../Utils/Utils";
 import MotoristaAPI from "../../api/motorista/motoristaAPI";
-import { existsInEscalasMotoristas, fetchAllEscalasMotoristas, insertIntoEscalasMotoristas, updateEscalasMotoristas } from "../tables/EscalasMotoristas";
+import { getProfile } from "../../secure/secureStoreService";
+import {
+  existsInEscalasMotoristas,
+  fetchAllEscalasMotoristas,
+  fetchEscalasMotoristasByNome,
+  insertIntoEscalasMotoristas,
+  updateEscalasMotoristas,
+} from "../tables/EscalasMotoristas";
 
-export const syncData = async () => {
+export const syncData = async (userData: any) => {
   try {
-    const response = await MotoristaAPI.getInstance().getAllMotoristas();
-    if (response.status === 200) {
-      const data = response.data;
-      for (const item of data) {
-        const id = item.Id.toString();
+    const profile = await getProfile();
+    const id = profile?.id;
+    const dateForAPI = getCurrentMonthFirstDay();
+    const response = await MotoristaAPI.getInstance().getAllMotoristas(
+      id,
+      userData?.nome,
+      encodeURIComponent(dateForAPI)
+    );
+    const data = response;
+    // Vinculando DataEntradaProgramada e HoraInicioProgramada de EscalaMotoristaEntrada a EscalaMotoristaSaida
+    data.EscalaMotoristasDTO.EscalaMotoristaEntrada.forEach((entrada) => {
+      const saidasCorrespondentes = data.EscalaMotoristasDTO.EscalaMotoristaSaida.filter(
+        (saida) => saida.EmployeeId === entrada.EmployeeId
+      );
+      saidasCorrespondentes.forEach((saidaCorrespondente) => {
+        saidaCorrespondente.DataEntradaProgramada = entrada.DataEntradaProgramada;
+        saidaCorrespondente.HoraInicioProgramada = entrada.HoraInicioProgramada;
+      });
+    });
+    
+    // Vinculando DataSaidaProgramada e HoraFimProgramada de EscalaMotoristaSaida a EscalaMotoristaEntrada
+    data.EscalaMotoristasDTO.EscalaMotoristaSaida.forEach((saida) => {
+      const entradasCorrespondentes = data.EscalaMotoristasDTO.EscalaMotoristaEntrada.filter(
+        (entrada) => entrada.EmployeeId === saida.EmployeeId
+      );
+      entradasCorrespondentes.forEach((entradaCorrespondente) => {
+        entradaCorrespondente.DataSaidaProgramada = saida.DataSaidaProgramada;
+        entradaCorrespondente.HoraFimProgramada = saida.HoraFimProgramada;
+      });
+    });
+    
 
-        if (await existsInEscalasMotoristas(id)) {
-          await updateEscalasMotoristas({
-            Id: id,
-            Data: item.Data,
-            HoraInicio: item.HoraInicio,
-            HoraFim: item.HoraFim,
-            EhFolga: item.EhFolga, // Você pode definir um valor padrão
-            DiaFinalizado: item.DiaFinalizado, // Você pode definir um valor padrão
-            MotoristaId: item.MotoristaId,
-            EmployeePerimetroId: item.EmployeePerimetroId, // Você pode definir um valor padrão
-            Descricao: item.Descricao || '', // Verifique se 'descricao' está definido ou forneça um valor padrão
-            DateCreated: item.DateCreated, // Você pode definir um valor padrão
-            DateUpdated: item.DateUpdated, // Você pode definir um valor padrão
-            DateDeleted: item.DateDeleted, // Você pode definir um valor padrão
-          });
-        } else {
-          await insertIntoEscalasMotoristas({
-            Id: id,
-            Data: item.Data,
-            HoraInicio: item.HoraInicio,
-            HoraFim: item.HoraFim,
-            EhFolga: item.EhFolga, // Você pode definir um valor padrão
-            DiaFinalizado: item.DiaFinalizado, // Você pode definir um valor padrão
-            MotoristaId: item.MotoristaId,
-            EmployeePerimetroId: item.EmployeePerimetroId, // Você pode definir um valor padrão
-            Descricao: item.Descricao || '', // Verifique se 'descricao' está definido ou forneça um valor padrão
-            DateCreated: item.DateCreated, // Você pode definir um valor padrão
-            DateUpdated: item.DateUpdated, // Você pode definir um valor padrão
-            DateDeleted: item.DateDeleted, // Você pode definir um valor padrão
-          });
-        }
-      }      
-    }
+    const processItems = async (items: any[]) => {
+      const promises = items.map(async (item) => {
+        const commonData = buildCommonData(item);
+        await insertOrUpdate(commonData);
+      });
+      await Promise.all(promises);
+    };
+    await processItems(data.EscalaMotoristasDTO.EscalaMotoristaEntrada);
+    await processItems(data.EscalaMotoristasDTO.EscalaMotoristaFolga);
+    await processItems(data.EscalaMotoristasDTO.EscalaMotoristaSaida);
+
+    return {
+      status: "success",
+      message: "Sincronização bem-sucedida!",
+    };
   } catch (error: any) {
-    console.error("Sync failed:", error);
-    if (error.response) {
-      console.error("Response Data:", error.response.data);
-      console.error("Response Status:", error.response.status);
-      console.error("Response Headers:", error.response.headers);
-    } else if (error.request) {
-      console.error("Request made but no response received. Request:", error.request);
-    } else {
-      console.error("Error details:", error.message);
-    }
+    // console.log(error.message);
+    return {
+      status: "error",
+      message: error.message,
+    };
   }
 };
 
+const buildCommonData = (item: any) => {
+  const id = item.Id.toString();
 
-export const fetchAllFromService = async () => {
-    try {
-        const escalasMotoristas = await fetchAllEscalasMotoristas();
-        // console.log(escalasMotoristas); // Você pode removê-lo depois que verificar que tudo está funcionando
+  let descricao = item.Descricao || "";
+  if (descricao === "Saída programada") {
+    descricao = "saida";
+  } else if (descricao === "Dia de folga") {
+    descricao = "folga";
+  } else if (descricao === "Entrada programada") {
+    descricao = "entrada";
+  }
 
-        return escalasMotoristas;
-    } catch (error) {
-        console.error("Erro ao buscar escalas dos motoristas:", error);
-        throw error; // Isso irá permitir que você trate o erro em um nível superior, se necessário
-    }
+  return {
+    Id: id,
+    Descricao: descricao,
+    BateuPonto: item.BateuPonto || false,
+    DataEntradaProgramada:item.DataEntradaProgramada,
+    HoraInicioProgramada: item.HoraInicioProgramada,
+    DataSaidaProgramada: item.DataSaidaProgramada,
+    HoraFimProgramada: item.HoraFimProgramada,
+    EmployeeId: item.EmployeeId || "",
+    LocalEntradaProgramadoId:
+      item.LocalEntradaProgramadoId || item.LocalSaidaProgramadoId || "",
+    LocalEntradaProgramado:
+      item.LocalEntradaProgramado || item.LocalSaidaProgramado || "",
+  };
 };
 
+const insertOrUpdate = async (commonData: any) => {
+  const id = commonData.Id;
+  // console.log(id);
+  if (await existsInEscalasMotoristas(id)) {
+    await updateEscalasMotoristas(commonData);
+  } else {
+    await insertIntoEscalasMotoristas(commonData);
+  }
+};
 
+export const fetchAllFromService = async () => {
+  try {
+    const escalasMotoristas = await fetchAllEscalasMotoristas();
+    return escalasMotoristas;
+  } catch (error) {
+    console.error("Erro ao buscar escalas dos motoristas:", error);
+    throw error;
+  }
+};
+
+export const fetchAllFromServiceNome = async (nome: string): Promise<any> => {
+  try {
+    const escalasMotoristas = await fetchEscalasMotoristasByNome(nome);
+    return escalasMotoristas;
+  } catch (error) {
+    console.error("Erro ao buscar escalas dos motoristas:", error);
+    throw error;
+  }
+};

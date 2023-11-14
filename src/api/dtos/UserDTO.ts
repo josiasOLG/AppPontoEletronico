@@ -1,7 +1,11 @@
 interface UserDTO {
   id?: number;
-  username: string;
-  senha?: string;
+  Login: string;
+  PasswordHash?: string;
+  Token: string;
+  Expiration: string;
+  FirstName: string;
+  LastName: string;
 }
 
 export default UserDTO;

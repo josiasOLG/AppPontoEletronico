@@ -1,43 +1,61 @@
-import React from 'react';
-import { View, StyleSheet, ViewStyle, TextStyle } from 'react-native';
-import TextAtom from '../../../atoms/TextAtom/TextAtom';
-import IconGroupMolecule from '../IconGroupMolecule/IconGroupMolecule';
-import { Icon } from '../IconGroupMolecule/IconGroupMolecule'; // Importar a interface Icon se estiver em outro arquivo
+import React from "react";
+import { View, StyleSheet, ViewStyle, TextStyle } from "react-native";
+import TextAtom from "../../../atoms/TextAtom/TextAtom";
+import IconGroupMolecule from "../IconGroupMolecule/IconGroupMolecule";
+import { Icon } from "../IconGroupMolecule/IconGroupMolecule"; // Importar a interface Icon se estiver em outro arquivo
+import ButtonAtom from "../../../atoms/ButtonAtom/ButtonAtom";
+import { useSelector } from "react-redux";
 
 interface CardTransparentMoleculeProps {
   title: string;
-  icons: Icon[];
 }
+
+
+const CardTransparentMolecule: React.FC<CardTransparentMoleculeProps> = ({
+  title,
+}) => {
+  const status = useSelector((state: any) => state.timeCircle.statusText);
+  const isButtonEnabled = useSelector(
+    (state: any) => state.timeCircle.buttonEnabled
+  );
+
+  const icons = [
+    { name: "apple", color: "#e3e3e3" },
+    { name: "android", color: "#e3e3e3" },
+    { name: "windows", color: "#e3e3e3" }
+  ]
+
+  return (
+    <View style={styles.cardTransparent}>
+      <TextAtom
+          text={status ? status : title}
+          style={styles.cardText}
+        />
+        <IconGroupMolecule icons={icons} />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   cardTransparent: {
     flex: 0.48,
-    borderColor: "#273b44",
+    borderColor: "#e3e3e3",
     borderWidth: 1,
     backgroundColor: "transparent",
     padding: 20,
     borderRadius: 10,
     height: 150,
-    alignContent: 'center',
-    justifyContent: 'center',
+    alignContent: "center",
+    justifyContent: "center",
     marginBottom: 20,
   } as ViewStyle,
   cardText: {
-    color: "#87fdef",
+    color: "#e3e3e3",
     fontWeight: "700",
     textAlign: "center",
     fontSize: 20,
     marginBottom: 10,
   } as TextStyle,
 });
-
-const CardTransparentMolecule: React.FC<CardTransparentMoleculeProps> = ({ title, icons }) => {
-  return (
-    <View style={styles.cardTransparent}>
-      <TextAtom text={title} style={styles.cardText} />
-      <IconGroupMolecule icons={icons} />
-    </View>
-  );
-};
 
 export default CardTransparentMolecule;

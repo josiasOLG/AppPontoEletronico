@@ -1,17 +1,21 @@
 // ModalComponentOrganism.tsx
 
-import React from 'react';
-import { View, Modal, StyleSheet } from 'react-native';
-import ButtonAtom from '../../atoms/ButtonAtom/ButtonAtom';
-import IconAtom from '../../atoms/IconAtom/IconAtom';
-import TextAtom from '../../atoms/TextAtom/TextAtom';
+import React from "react";
+import { View, Modal, StyleSheet } from "react-native";
+import ButtonAtom from "../../atoms/ButtonAtom/ButtonAtom";
+import IconAtom from "../../atoms/IconAtom/IconAtom";
+import TextAtom from "../../atoms/TextAtom/TextAtom";
+import { LinearGradient } from "expo-linear-gradient";
 
 type ModalProps = {
   modalVisible: boolean;
   setModalVisible: (visible: boolean) => void;
 };
 
-const ModalComponentOrganism: React.FC<ModalProps> = ({ modalVisible, setModalVisible }) => {
+const ModalComponentOrganism: React.FC<ModalProps> = ({
+  modalVisible,
+  setModalVisible,
+}) => {
   return (
     <Modal
       animationType="slide"
@@ -23,19 +27,38 @@ const ModalComponentOrganism: React.FC<ModalProps> = ({ modalVisible, setModalVi
     >
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <ButtonAtom style={styles.closeButton} onPress={() => setModalVisible(!modalVisible)}>
-            <IconAtom name="close" size={24} color="white" />
+          <ButtonAtom
+            style={styles.closeButton}
+            onPress={() => setModalVisible(!modalVisible)}
+          >
+            <IconAtom name="close" size={24} color="#333" />
           </ButtonAtom>
-          <TextAtom  text='Cartão de ponto' style={styles.modalText}/>
-          <ButtonAtom style={styles.fullWidthButton}>
-            <TextAtom text='REGISTRAR PONTO' style={styles.fullWidthButtonText} />
-          </ButtonAtom>
+          <TextAtom
+            text="Registrar ponto eletronico"
+            style={styles.modalText}
+          />
+          <TextAtom
+            text="Faça o seu registro de ponto abaixo clicando no botão"
+            style={styles.modalTextSub}
+          />
+          <LinearGradient
+            colors={["#006400", "#20B2AA"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.fullWidthButton}
+          >
+            <ButtonAtom >
+              <TextAtom
+                text="REGISTRAR PONTO"
+                style={styles.fullWidthButtonText}
+              />
+            </ButtonAtom>
+          </LinearGradient>
         </View>
       </View>
     </Modal>
   );
 };
-
 
 const styles = StyleSheet.create({
   centeredView: {
@@ -44,32 +67,40 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.4)",
   },
   modalView: {
-    backgroundColor: "#0a1823",
+    backgroundColor: "#fff",
     paddingHorizontal: 20,
     elevation: 5,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    height: "25%",
+    height: "30%",
     alignItems: "center", // Alinha os itens ao centro
   },
   closeButton: {
     alignSelf: "flex-end", // Alinha o botão de fechar ao canto superior direito
+    marginTop: 10,
   },
   modalText: {
+    marginBottom: 5,
+    textAlign: "center",
+    fontWeight: "900",
+    fontSize: 25,
+    color: "#333",
+  },
+  modalTextSub: {
     marginBottom: 15,
     textAlign: "center",
     fontWeight: "400",
     fontSize: 20,
-    color: "#fff",
+    color: "#333",
   },
   fullWidthButton: {
-    backgroundColor: "#fff",
-    padding: 10,
-    borderRadius: 0,
-    width: "100%", // Faz o botão ocupar toda a largura disponível
+    backgroundColor: "transparent",
+    padding: 20,
+    borderRadius: 8,
+    width: "100%",
   },
   fullWidthButtonText: {
-    color: "#333",
+    color: "#fff",
     textAlign: "center",
     fontSize: 18,
   },

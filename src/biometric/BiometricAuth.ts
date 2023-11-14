@@ -16,28 +16,29 @@ export const checkBiometricSupport = async () => {
 export const authenticate = async (): Promise<boolean> => {
   try {
     const { isSupported, isEnrolled } = await checkBiometricSupport();
+    const supportedTypes = await LocalAuthentication.supportedAuthenticationTypesAsync();
 
     if (!isSupported) {
-      // Alert.alert("Erro", "Seu dispositivo não suporta autenticação biométrica.");
       return false;
     }
 
     if (!isEnrolled) {
-      // Alert.alert("Erro", "Você não está inscrito para autenticação biométrica.");
       return false;
     }
 
-    const result = await LocalAuthentication.authenticateAsync({
-      promptMessage: "Autentique-se para continuar",
-    });
+    let promptMessage = "Autentique-se para continuar";
 
-    if (!result.success) {
-      // Alert.alert("Erro", "Falha na autenticação biométrica.");
+    if (supportedTypes.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION)) {
+      promptMessage = "Use o Face ID para autenticar";
     }
 
+    const result = await LocalAuthentication.authenticateAsync({
+      promptMessage
+    });
+    // console.log(result);
     return result.success;
   } catch (error) {
-    // Alert.alert("Erro", "Ocorreu um erro ao tentar autenticar. Por favor, tente novamente.");
     return false;
   }
 };
+

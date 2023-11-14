@@ -1,17 +1,14 @@
-// MotoristaDTO.tsx
+export interface EscalaMotoristaEntradaDTO {
+  Descricao: string;
+  BateuPonto: boolean;
+  DataEntradaProgramada: string;
+  HoraInicioProgramada: string;
+  EmployeeId: string;
+  LocalEntradaProgramadoId: string;
+  LocalEntradaProgramado: string;
+  Id: string;
+}
 
-export default interface MotoristaDTO {
-    Id: string;
-    Data: string;
-    HoraInicio: string;
-    HoraFim: string;
-    EhFolga: number;
-    DiaFinalizado: number;
-    MotoristaId: string;
-    EmployeePerimetroId: string;
-    Descricao?: string;
-    DateCreated: string;
-    DateUpdated?: string;
-    DateDeleted?: string;
-  }
-  
+export interface EscalaMotoristasDTO {
+  escalaMotoristaEntrada: EscalaMotoristaEntradaDTO[];
+}

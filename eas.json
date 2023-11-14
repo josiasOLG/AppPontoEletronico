@@ -1,0 +1,77 @@
+
+
+{
+  "cli": {
+    "version": ">= 5.4.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "ENVIRONMENT": "dev",
+        "API_URL": "http://api.trucogolds.info/api",
+        "EXPO_ENV": "dev"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "ENVIRONMENT": "dev",
+        "API_URL": "http://api.trucogolds.info/api"
+      }
+    },
+    "production": {
+      "distribution": "store",
+      "env": {
+        "ENVIRONMENT": "production"
+      },
+      "android": {
+        "releaseChannel": "production",
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "ios": {
+        "buildConfiguration": "Release",
+        "releaseChannel": "production",
+        "autoIncrement": "version"
+      }
+    },
+    "internalTest": {
+      "distribution": "internal",
+      "env": {
+        "ENVIRONMENT": "test"
+      },
+      "android": {
+        "releaseChannel": "test",
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "ios": {
+        "buildConfiguration": "Debug",
+        "releaseChannel": "test",
+        "autoIncrement": "version"
+      }
+    },
+    "localhost": {
+      "distribution": "internal",
+      "env": {
+        "ENVIRONMENT": "localhost",
+        "API_URL": "http://192.168.1.7:5000"
+      },
+      "android": {},
+      "ios": {}
+    }
+  },
+  "submit": {
+    "production": {
+      "android": {
+        "track": "production",
+        "releaseStatus": "completed"
+      },
+      "ios": {
+        "appleId": "your-apple-id@example.com",
+        "appleTeamId": "YOUR_APPLE_TEAM_ID",
+        "ascAppId": "YOUR_APP_STORE_CONNECT_APP_ID"
+      }
+    }
+  }
+}

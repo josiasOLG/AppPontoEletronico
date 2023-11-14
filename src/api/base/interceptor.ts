@@ -1,67 +1,55 @@
 import axiosInstance from './axiosInstance';
 import HttpStatusCode from '../enums/HttpStatusCode';
 import * as SecureStore from 'expo-secure-store';
-import { apiFallback } from './apiFallback';
+import UserAPI from '../user/userAPI';
+import { getLogin, getPassword, saveToken, saveTokenExpiration } from '../../secure/secureStoreService';
+
+let isRefreshing = false;
 
 const refreshToken = async () => {
+  if (isRefreshing) return;
+  isRefreshing = true;
   try {
-    // Obter o refresh token do armazenamento seguro
-    const savedRefreshToken = await SecureStore.getItemAsync('refreshToken');
-
-    if (!savedRefreshToken) {
-      throw new Error('No refresh token found');
-    }
-
-    // Fazer a requisição para renovar o token
-    const response = await axiosInstance.post('/refresh-token', {
-      refreshToken: savedRefreshToken,
-    });
-
-    const { accessToken, refreshToken: newRefreshToken } = response.data;
-
-    // Armazenar o novo access token e o refresh token
-    await SecureStore.setItemAsync('accessToken', accessToken);
-    await SecureStore.setItemAsync('refreshToken', newRefreshToken);
-
-    // Atualizar o header de autorização
-    axiosInstance.defaults.headers['Authorization'] = `Bearer ${accessToken}`;
+    const [username, password] = await Promise.all([getLogin(), getPassword()]);
+    const { Token, Expiration } = await UserAPI.getInstance().login(username, password);
+    // console.log('Token:',Token);
+    await Promise.all([saveToken(Token), saveTokenExpiration(Expiration)]);
+    axiosInstance.defaults.headers['Authorization'] = `Bearer ${Token}`;
   } catch (error) {
-    // Handle the error appropriately
-    console.error('Failed to refresh token: ', error);
+    console.error('Failed to refresh token:', error);
+  } finally {
+    isRefreshing = false;
   }
 };
 
-axiosInstance.interceptors.request.use(async (config) => {
+const setAuthorizationHeader = async (config) => {
   const token = await SecureStore.getItemAsync('accessToken');
-  if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`;
-  }
+  if (token) config.headers['Authorization'] = `Bearer ${token}`;
   return config;
-}, (error) => {
-  return Promise.reject(error);
-});
+};
 
-axiosInstance.interceptors.response.use((response) => {
-  return response;
-}, async (error) => {
-  const originalRequest = error.config;
+axiosInstance.interceptors.request.use(setAuthorizationHeader, Promise.reject);
 
-  if (error.response?.status === HttpStatusCode.UNAUTHORIZED) {
-    await refreshToken();
+axiosInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
 
-    // Pegar o novo token atualizado e adicionar no header
-    originalRequest.headers['Authorization'] = `Bearer ${await SecureStore.getItemAsync('accessToken')}`;
-    
-    // Tenta a chamada com o axiosInstance (API real) novamente
-    return axiosInstance(originalRequest)
-      .catch(async (axiosError) => {
-        if (axiosError.response?.status === HttpStatusCode.UNAUTHORIZED) {
-          // Se falhar novamente, tenta a chamada com o apiFallback (json-server)
-          return apiFallback(originalRequest);
-        }
-        return Promise.reject(axiosError);
-      });
+    if ((error.response?.status === HttpStatusCode.UNAUTHORIZED || error.response?.status === HttpStatusCode.NOT_FOUND) && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+       
+        await refreshToken();
+        originalRequest.headers['Authorization'] = `Bearer ${await SecureStore.getItemAsync('accessToken')}`;
+        return axiosInstance(originalRequest);
+      } catch (refreshError) {
+        console.error(refreshError);
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
   }
-
-  return Promise.reject(error);
-});
+);

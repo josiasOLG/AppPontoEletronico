@@ -3,10 +3,9 @@ import { View, Text, StyleSheet } from "react-native";
 import IconAtom from "../../atoms/IconAtom/IconAtom";
 import ButtonAtom from "../../atoms/ButtonAtom/ButtonAtom";
 import TextAtom from "../../atoms/TextAtom/TextAtom";
-import MotoristaDTO from "../../api/dtos/MotoristaDTO";
 
 type ListItemProps = {
-  item: MotoristaDTO;
+  item: any;
   onOptionClick: (item: any) => void;
   handleOptionClick:  (item: any) => void;
 };
@@ -16,18 +15,31 @@ const ListItemMolecules: React.FC<ListItemProps> = ({
   onOptionClick,
   handleOptionClick,
 }) => {
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+
   return (
-    <ButtonAtom onPress={() => onOptionClick(item)}>
+    <ButtonAtom onPress={() => {
+      onOptionClick(item);
+    }}>
       <View style={styles.listItem}>
         <View>
-          <TextAtom style={styles.listItemText} text={item.Descricao}/>
+          <TextAtom style={styles.listItemText} text={item.LocalEntradaProgramado ? item.LocalEntradaProgramado : item.Descricao === 'folga' ? 'Dia de folga' : ''}/>
           <View style={styles.textoItem}>
             <Text
               style={styles.listItemSubText}
-            >{`Hora inicio: ${item.Data}`}</Text>
+            >
+              {`Hora inicio: ${formatTime(item.DataEntradaProgramada)}`}
+            </Text>
             <Text
               style={styles.listItemSubTextEnd}
-            >{`Hora fim: ${item.DateDeleted}`}</Text>
+            >
+              {`Hora fim: ${formatTime(item.DataSaidaProgramada)}`}
+            </Text>
           </View>
         </View>
         <View style={styles.icons}>
@@ -35,7 +47,7 @@ const ListItemMolecules: React.FC<ListItemProps> = ({
             style={styles.optionButton}
             onPress={() => handleOptionClick(item)}
           >
-            <IconAtom name="card-outline" size={24} color="white" library="Ionicons"/>
+            <IconAtom name="card-outline" size={24} color="#fff" library="Ionicons"/>
           </ButtonAtom>
         </View>
       </View>
@@ -51,14 +63,13 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "#333",
     borderBottomWidth: 2,
-    borderBottomColor: "#ccc",
-    marginBottom: 5,
+    borderBottomColor: "#20B2AA",
+    marginBottom: 10,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
   textoItem: {
     flex: 1,
-    flexDirection: "row",
   },
   listItemText: {
     color: "#fff",
@@ -67,11 +78,11 @@ const styles = StyleSheet.create({
   listItemSubText: {
     color: "#aaa",
     fontSize: 12,
+    marginVertical: 5,
   },
   listItemSubTextEnd: {
     color: "#aaa",
     fontSize: 12,
-    marginLeft: 10,
   },
   icons: {
     flexDirection: "row",

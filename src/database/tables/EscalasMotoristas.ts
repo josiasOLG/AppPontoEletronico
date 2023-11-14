@@ -14,18 +14,16 @@ export const initEscalasMotoristasTable = async () => {
       tx.executeSql(
         `
         CREATE TABLE IF NOT EXISTS EscalasMotoristas (
-          Id TEXT PRIMARY KEY NOT NULL,
-          Data TEXT NOT NULL,
-          HoraInicio TEXT NOT NULL,
-          HoraFim TEXT NOT NULL,
-          EhFolga INTEGER NOT NULL,
-          DiaFinalizado INTEGER NOT NULL,
-          MotoristaId TEXT NOT NULL,
-          EmployeePerimetroId TEXT NOT NULL,
+          Id TEXT PRIMARY KEY,
           Descricao TEXT,
-          DateCreated TEXT NOT NULL,
-          DateUpdated TEXT,
-          DateDeleted TEXT
+          BateuPonto INTEGER,
+          DataEntradaProgramada TEXT,
+          HoraInicioProgramada TEXT,
+          DataSaidaProgramada TEXT,
+          HoraFimProgramada TEXT,
+          EmployeeId TEXT,
+          LocalEntradaProgramadoId TEXT,
+          LocalEntradaProgramado TEXT
         );
       `,
         [],
@@ -38,21 +36,17 @@ export const initEscalasMotoristasTable = async () => {
 
 export const insertIntoEscalasMotoristas = async (data: {
   Id: string;
-  Data: string;
-  HoraInicio: string;
-  HoraFim: string;
-  EhFolga: number;
-  DiaFinalizado: number;
-  MotoristaId: string;
-  EmployeePerimetroId: string;
-  Descricao?: string;
-  DateCreated: string;
-  DateUpdated?: string;
-  DateDeleted?: string;
+  Descricao: string;
+  BateuPonto: boolean;
+  DataEntradaProgramada: string;
+  HoraInicioProgramada: string;
+  DataSaidaProgramada: string;
+  HoraFimProgramada: string;
+  EmployeeId: string;
+  LocalEntradaProgramadoId: string;
+  LocalEntradaProgramado: string;
 }) => {
-  // Verifique se o valor de 'Id' é válido
   if (!data.Id || typeof data.Id !== "string") {
-    // Se não for válido, você pode lidar com o erro ou registrar uma mensagem de erro aqui
     console.error("Erro: Valor inválido para 'Id'");
     return;
   }
@@ -61,32 +55,28 @@ export const insertIntoEscalasMotoristas = async (data: {
     db.transaction((tx: any) => {
       tx.executeSql(
         `
-              INSERT INTO EscalasMotoristas (Id, Data, HoraInicio, HoraFim, EhFolga, DiaFinalizado, MotoristaId, EmployeePerimetroId, Descricao, DateCreated, DateUpdated, DateDeleted)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-            `,
+        INSERT INTO EscalasMotoristas (Id, Descricao, BateuPonto, DataEntradaProgramada, HoraInicioProgramada,DataSaidaProgramada,HoraFimProgramada, EmployeeId, LocalEntradaProgramadoId, LocalEntradaProgramado)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+      `,
         [
           data.Id,
-          data.Data,
-          data.HoraInicio,
-          data.HoraFim,
-          data.EhFolga,
-          data.DiaFinalizado,
-          data.MotoristaId,
-          data.EmployeePerimetroId,
           data.Descricao,
-          data.DateCreated,
-          data.DateUpdated,
-          data.DateDeleted,
+          data.BateuPonto ? 1 : 0,
+          data.DataEntradaProgramada,
+          data.HoraInicioProgramada,
+          data.DataSaidaProgramada,
+          data.HoraFimProgramada,
+          data.EmployeeId,
+          data.LocalEntradaProgramadoId,
+          data.LocalEntradaProgramado,
         ],
         (_, result: any) => resolve(result),
-        (_, error: any) => {
-          reject(error);
-          return true;
-        }
+        (_, error: any) => reject(error)
       );
     });
   });
 };
+
 
 export const fetchAllEscalasMotoristas = async () => {
   return new Promise((resolve, reject) => {
@@ -95,10 +85,7 @@ export const fetchAllEscalasMotoristas = async () => {
         `SELECT * FROM EscalasMotoristas;`,
         [],
         (_, result: any) => resolve(result.rows._array),
-        (_, error: any) => {
-          reject(error);
-          return true;
-        }
+        (_, error: any) => reject(error)
       );
     });
   });
@@ -111,30 +98,46 @@ export const fetchEscalasMotoristasById = async (id: string) => {
         `SELECT * FROM EscalasMotoristas WHERE Id = ?;`,
         [id],
         (_, result: any) => resolve(result.rows._array[0] || null),
+        (_, error: any) => reject(error)
+      );
+    });
+  });
+};
+
+
+export const fetchEscalasMotoristasByNome = async (descricao: string) => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx: any) => {
+      tx.executeSql(
+        `SELECT * FROM EscalasMotoristas WHERE Descricao = ?;`,
+        [descricao],
+        (_, result: any) => {
+          // console.log("Resultado SQL:", result.rows._array);  // Log de depuração
+          resolve(result.rows._array || []);
+        },
         (_, error: any) => {
+          // console.error("Erro SQL:", error);  // Log de depuração
           reject(error);
-          return true;
         }
       );
     });
   });
 };
 
+
+
 export const updateEscalasMotoristas = async (data: {
   Id: string;
-  Data: string;
-  HoraInicio: string;
-  HoraFim: string;
-  EhFolga: number;
-  DiaFinalizado: number;
-  MotoristaId: string;
-  EmployeePerimetroId: string;
-  Descricao?: string;
-  DateCreated: string;
-  DateUpdated?: string;
-  DateDeleted?: string;
+  Descricao: string;
+  BateuPonto: boolean;
+  DataEntradaProgramada: string;
+  HoraInicioProgramada: string;
+  DataSaidaProgramada: string;
+  HoraFimProgramada: string;
+  EmployeeId: string;
+  LocalEntradaProgramadoId: string;
+  LocalEntradaProgramado: string;
 }) => {
-  // Verifique se o valor de 'Id' é válido
   if (!data.Id || typeof data.Id !== "string") {
     console.error("Erro: Valor inválido para 'Id'");
     return;
@@ -145,28 +148,23 @@ export const updateEscalasMotoristas = async (data: {
       tx.executeSql(
         `
           UPDATE EscalasMotoristas 
-          SET Data = ?, HoraInicio = ?, HoraFim = ?, EhFolga = ?, DiaFinalizado = ?, MotoristaId = ?, EmployeePerimetroId = ?, Descricao = ?, DateCreated = ?, DateUpdated = ?, DateDeleted = ?
+          SET Descricao = ?, BateuPonto = ?, DataEntradaProgramada = ?, HoraInicioProgramada = ?, DataSaidaProgramada = ?, HoraFimProgramada = ?, EmployeeId = ?, LocalEntradaProgramadoId = ?, LocalEntradaProgramado = ?
           WHERE Id = ?;
         `,
         [
-          data.Data,
-          data.HoraInicio,
-          data.HoraFim,
-          data.EhFolga,
-          data.DiaFinalizado,
-          data.MotoristaId,
-          data.EmployeePerimetroId,
           data.Descricao,
-          data.DateCreated,
-          data.DateUpdated,
-          data.DateDeleted,
-          data.Id,
+          data.BateuPonto ? 1 : 0,
+          data.DataEntradaProgramada,
+          data.HoraInicioProgramada,
+          data.DataSaidaProgramada,
+          data.HoraFimProgramada,
+          data.EmployeeId,
+          data.LocalEntradaProgramadoId,
+          data.LocalEntradaProgramado,
+          data.Id
         ],
         (_, result: any) => resolve(result),
-        (_, error: any) => {
-          reject(error);
-          return true;
-        }
+        (_, error: any) => reject(error)
       );
     });
   });
@@ -184,14 +182,14 @@ export const existsInEscalasMotoristas = async (id: string): Promise<boolean> =>
     db.transaction((tx: any) => {
       tx.executeSql(
         `
-          SELECT Id FROM EscalasMotoristas WHERE Id = ? LIMIT 1;
+          SELECT Id FROM EscalasMotoristas WHERE Id = ?;
         `,
         [id],
         (_, result: any) => {
           if (result.rows.length > 0) {
-            resolve(true);  // Retorna 'true' se o registro com o 'Id' fornecido existir
+            resolve(true);
           } else {
-            resolve(false); // Retorna 'false' caso contrário
+            resolve(false);
           }
         },
         (_, error: any) => {

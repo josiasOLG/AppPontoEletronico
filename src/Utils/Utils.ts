@@ -11,3 +11,8 @@ export function getCurrentDateInPortuguese() {
 
     return `${day} de ${monthName}`;
 }
+
+export const getCurrentMonthFirstDay = () => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+};

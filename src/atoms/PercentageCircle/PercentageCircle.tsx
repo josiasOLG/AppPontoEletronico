@@ -5,6 +5,8 @@ import Svg, { Circle, G } from 'react-native-svg';
 interface PercentageCircleProps {
   percentage: number;
   size: number;
+  dataArray?: any[]; 
+  onDataArrayChange?: (dataArray: any[]) => void;
 }
 
 const PercentageCircle: React.FC<PercentageCircleProps> = ({ percentage, size }) => {

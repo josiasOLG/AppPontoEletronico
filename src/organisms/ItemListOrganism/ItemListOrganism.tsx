@@ -12,13 +12,18 @@ type ItemListProps = {
 
 const ItemListOrganism: React.FC<ItemListProps> = ({ data, handleItemClick, handleOptionClick }) => {
   // console.log("DATA:",data);
+
   return (
     <View style={styles.outerContainer}>
       <FlatList
         data={data}
         keyExtractor={(item) => item.Id}
         renderItem={({ item }) => (
-          <ListItemMolecules item={item} onOptionClick={handleItemClick} handleOptionClick={handleOptionClick}/>
+          <ListItemMolecules item={item} 
+          onOptionClick={(item) => {
+            handleItemClick(item);
+          }} 
+          handleOptionClick={handleOptionClick}/>
         )}
       />
     </View>

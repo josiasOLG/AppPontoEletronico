@@ -4,12 +4,18 @@ import { View, StyleSheet } from "react-native";
 import NavigationService from "../../routes/NavigationService";
 import { authenticate } from "../../biometric/BiometricAuth";
 import BiometricOrganism from "../../organisms/Biometric/BiometricOrganism/BiometricOrganism";
+import { styles } from "../../styles/PageStyle/BiometricStyle/BiometricStyle";
 
 const Biometric: React.FC = () => {
   const authenticateUser = async () => {
-    const authResult = await authenticate();
-    if (authResult) {
-      NavigationService.navigate("Home");
+    try {
+      const authResult = await authenticate();
+      // console.log(authResult);
+      if (authResult) {
+        NavigationService.navigate("Home");
+      }
+    }catch(e: any){
+      // console.log(e);
     }
   };
 
@@ -25,25 +31,5 @@ const Biometric: React.FC = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#010818",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  gradientEffect: {
-    position: "absolute",
-    width: "100%",
-    height: 300,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderBottomLeftRadius: 100,
-    borderBottomRightRadius: 0,
-  },
-});
 
 export default Biometric;

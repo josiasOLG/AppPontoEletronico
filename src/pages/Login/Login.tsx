@@ -1,14 +1,15 @@
 import React from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
 import { Formik, FormikProps } from "formik";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
+import { StackNavigationProp } from "@react-navigation/stack";
 import StatusBarAtoms from "../../atoms/StatusBar/StatusBar";
 import { loginRequest, loginSuccess } from "../../redux/actions/loginActions";
 import UserAPI from "../../api/user/userAPI";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { showErrorToast } from "../../redux/actions/error.actions";
-import { useDispatch } from "react-redux";
-import { StackNavigationProp } from "@react-navigation/stack";
 import LoginSectionMolecules from "../../organisms/LoginSectionOrganisms/LoginSectionOrganisms";
+import { saveLogin, savePassword, saveProfile, saveToken, saveTokenExpiration } from "../../secure/secureStoreService";
 
 type RootStackParamList = {
   Home: undefined;
@@ -45,12 +46,24 @@ const Login: React.FC<Props> = ({ navigation }) => {
         // Idealmente, você deve ter uma interface ou tipo para 'userData' também.
         dispatch(loginSuccess(userData));
         AsyncStorage.setItem("isLoggedIn", "true");
+        const profile = {
+          firstName:  userData?.FirstName,
+          lastName: userData?.LastName,
+          id: userData?.Id
+        };
+        saveProfile(profile);
+        savePassword(password);
+        saveLogin(userData?.Login);
+        saveToken(userData?.Token);
+        saveTokenExpiration(userData?.Expiration);
         navigation.navigate("Home");
         if (enableBiometric) {
           AsyncStorage.setItem("biometric", "true");
         }
       })
       .catch((error: any) => {
+        // console.log(error);
+        console.log(error);
         dispatch(showErrorToast("Atenção", error.message));
       });
   };
