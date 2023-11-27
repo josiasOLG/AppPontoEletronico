@@ -42,9 +42,9 @@ const ModalComponentOrganism: React.FC<ModalProps> = ({
             style={styles.modalTextSub}
           />
           <LinearGradient
-            colors={["#006400", "#20B2AA"]}
+            colors={["#FFA62B", "#272838"]}
             start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
+            end={{ x: 1.2, y: 1 }}
             style={styles.fullWidthButton}
           >
             <ButtonAtom >
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.4)",
   },
   modalView: {
-    backgroundColor: "#fff",
+    backgroundColor: "#EDF2F4",
     paddingHorizontal: 20,
     elevation: 5,
     borderTopLeftRadius: 10,

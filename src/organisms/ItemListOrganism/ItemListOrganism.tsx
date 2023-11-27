@@ -8,9 +8,10 @@ type ItemListProps = {
   data: any;
   handleItemClick: (item: any) => void;
   handleOptionClick: (item: any) => void;
+  activeTab?: string;
 };
 
-const ItemListOrganism: React.FC<ItemListProps> = ({ data, handleItemClick, handleOptionClick }) => {
+const ItemListOrganism: React.FC<ItemListProps> = ({ data, handleItemClick, handleOptionClick, activeTab }) => {
   // console.log("DATA:",data);
 
   return (
@@ -20,6 +21,7 @@ const ItemListOrganism: React.FC<ItemListProps> = ({ data, handleItemClick, hand
         keyExtractor={(item) => item.Id}
         renderItem={({ item }) => (
           <ListItemMolecules item={item} 
+          activeTab={activeTab}
           onOptionClick={(item) => {
             handleItemClick(item);
           }} 

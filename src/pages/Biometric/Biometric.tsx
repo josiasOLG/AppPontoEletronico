@@ -5,6 +5,7 @@ import NavigationService from "../../routes/NavigationService";
 import { authenticate } from "../../biometric/BiometricAuth";
 import BiometricOrganism from "../../organisms/Biometric/BiometricOrganism/BiometricOrganism";
 import { styles } from "../../styles/PageStyle/BiometricStyle/BiometricStyle";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Biometric: React.FC = () => {
   const authenticateUser = async () => {
@@ -14,21 +15,26 @@ const Biometric: React.FC = () => {
       if (authResult) {
         NavigationService.navigate("Home");
       }
-    }catch(e: any){
+    } catch (e: any) {
       // console.log(e);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <LinearGradient
-          colors={["#006400", "#20B2AA"]}
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <LinearGradient
+          colors={["#AF1B3F", "#272838"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.gradientEffect}
         />
-      <BiometricOrganism onAuthenticate={authenticateUser} onAnimationFinish={authenticateUser} />
-    </View>
+        <BiometricOrganism
+          onAuthenticate={authenticateUser}
+          onAnimationFinish={authenticateUser}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 

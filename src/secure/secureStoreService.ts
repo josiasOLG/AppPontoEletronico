@@ -5,6 +5,19 @@ const TOKEN_EXPIRATION_KEY = 'refreshToken';
 const LOGIN_KEY = 'userLogin';
 const PASSWORD_KEY = 'userPassword';
 const PROFILE_KEY = 'PROFILE';
+const LOCATION_KEY = 'userLocation';
+
+// Salvar Localização
+export const saveLocation = async (location: any) => {
+  const locationString = JSON.stringify(location);
+  await SecureStore.setItemAsync(LOCATION_KEY, locationString);
+};
+
+// Recuperar Localização
+export const getLocation = async () => {
+  const locationString = await SecureStore.getItemAsync(LOCATION_KEY);
+  return locationString ? JSON.parse(locationString) : null;
+};
 
 // Salvar Token
 export const saveToken = async (token: any) => {

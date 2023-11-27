@@ -1,12 +1,6 @@
 import { NavigationContainerRef } from '@react-navigation/native';
 import { createRef } from 'react';
-
-type RootStackParamList = {
-  Login: undefined;
-  Home: undefined;
-  Details: undefined;
-  Biometric: undefined;
-};
+import { RootStackParamList } from './RootStackParamList';
 
 export const navigationRef = createRef<NavigationContainerRef<RootStackParamList>>();
 

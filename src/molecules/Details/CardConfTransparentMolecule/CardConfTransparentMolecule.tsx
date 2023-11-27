@@ -2,14 +2,55 @@ import React from "react";
 import { View, StyleSheet, ViewStyle, TextStyle } from "react-native";
 import TextAtom from "../../../atoms/TextAtom/TextAtom";
 import IconGroupMolecule from "../IconGroupMolecule/IconGroupMolecule";
-import { Icon } from "../IconGroupMolecule/IconGroupMolecule"; // Importar a interface Icon se estiver em outro arquivo
 import ButtonAtom from "../../../atoms/ButtonAtom/ButtonAtom";
 import { useSelector } from "react-redux";
+import NavigationService from "../../../routes/NavigationService";
 
 interface CardTransparentMoleculeProps {
   title: string;
   dataArray: any;
+  activeTab: string;
 }
+
+const CardConfTransparentMolecule: React.FC<CardTransparentMoleculeProps> = ({
+  title,
+  dataArray,
+  activeTab,
+}) => {
+  const status = useSelector((state: any) => state.timeCircle.statusText);
+  const isButtonEnabled = useSelector(
+    (state: any) => state.timeCircle.buttonEnabled
+  );
+
+  const register = () => {
+    NavigationService.navigate("CameraPoint", {
+      param: { activeTab: activeTab },
+    });
+  };
+
+  const icons = [
+    { name: "apple", color: !isButtonEnabled ? "#333" : "#e3e3e3" },
+    { name: "android", color: !isButtonEnabled ? "#333" : "#e3e3e3" },
+    { name: "windows", color: !isButtonEnabled ? "#333" : "#e3e3e3" },
+  ];
+
+  return (
+    <ButtonAtom
+      style={[
+        styles.cardTransparent,
+        isButtonEnabled ? styles.disabled : styles.enabled,
+      ]}
+      onPress={register}
+      disabled={isButtonEnabled}
+    > 
+      <TextAtom text={title} style={[
+          styles.cardText,
+          isButtonEnabled ? styles.textDisabled : styles.textEnabled,
+        ]} />
+      <IconGroupMolecule icons={icons} />
+    </ButtonAtom>
+  );
+};
 
 const styles = StyleSheet.create({
   cardTransparent: {
@@ -32,12 +73,12 @@ const styles = StyleSheet.create({
   } as TextStyle,
   enabled: {
     borderColor: "#273b44",
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   disabled: {
     borderColor: "#e3e3e3",
     backgroundColor: "#fff",
-    opacity: 0.1
+    opacity: 0.1,
   },
   textEnabled: {
     color: "#333",
@@ -46,40 +87,5 @@ const styles = StyleSheet.create({
     color: "#e3e3e3",
   },
 });
-
-const CardConfTransparentMolecule: React.FC<CardTransparentMoleculeProps> = ({
-  title,
-  dataArray,
-}) => {
-  const status = useSelector((state: any) => state.timeCircle.statusText);
-  const isButtonEnabled = useSelector(
-    (state: any) => state.timeCircle.buttonEnabled
-  );
-
-  const icons = [
-    { name: "apple", color: !isButtonEnabled ? "#333" : "#e3e3e3" },
-    { name: "android", color: !isButtonEnabled ? "#333" : "#e3e3e3"  },
-    { name: "windows", color: !isButtonEnabled ? "#333" : "#e3e3e3" }
-  ]
-    
-  return (
-    <ButtonAtom
-      style={[
-        styles.cardTransparent,
-        isButtonEnabled ? styles.disabled : styles.enabled,
-      ]}
-      disabled={isButtonEnabled}
-    >
-      <TextAtom
-        text={title}
-        style={[
-          styles.cardText,
-          isButtonEnabled ? styles.textDisabled : styles.textEnabled,
-        ]}
-      />
-      <IconGroupMolecule icons={icons} />
-    </ButtonAtom>
-  );
-};
 
 export default CardConfTransparentMolecule;

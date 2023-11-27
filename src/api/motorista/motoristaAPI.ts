@@ -30,6 +30,7 @@ export default class MotoristaAPI extends ApiBase {
   public async getAllMotoristas(id: string, nome: string, month: string): Promise<any> {
     try {
       const response = await this.get<any>(`/?id=${id}&nome=${nome}&month=${month}`);
+      // console.log(response.EscalaMotoristasDTO.EscalaMotoristaEntrada);
       return response;
     } catch (error) {
       console.error('Erro ao buscar todos os motoristas:', error);

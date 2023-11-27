@@ -6,6 +6,7 @@ import {
   Platform,
   TouchableOpacity,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import StatusBarAtoms from "../../atoms/StatusBar/StatusBar";
@@ -27,6 +28,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import IconAtom from "../../atoms/IconAtom/IconAtom";
 import { useFocusEffect } from "@react-navigation/native";
 import { setMotoristaData } from "../../redux/actions/motoristaActions";
+import { Colors } from "../../styles";
+import { ordenarPorDatasProximas } from "../../Utils/Utils";
+import TextAtom from "../../atoms/TextAtom/TextAtom";
 
 type RootStackParamList = {
   Home: undefined;
@@ -49,7 +53,8 @@ const Home: React.FC<Props> = () => {
 
   const updateDataBasedOnTab = useCallback(async () => {
     try {
-      const data = await fetchAllFromServiceNome(activeTab.toLowerCase());
+      let data = await fetchAllFromServiceNome(activeTab.toLowerCase());
+      data = ordenarPorDatasProximas(data);
       setEscalaMotorista(data);
     } catch (error: any) {
       dispatch(
@@ -60,8 +65,8 @@ const Home: React.FC<Props> = () => {
 
   const handlerClickDetails = (item: any) => {
     dispatch(setMotoristaData(item));
-    NavigationService.navigate('Details');
-  }
+    NavigationService.navigate("Details", { param: activeTab });
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -82,80 +87,97 @@ const Home: React.FC<Props> = () => {
         setDataSynced((prev) => !prev);
       } else {
         dispatch(showErrorToast("Sincronização falhou", syncResult.message));
-        console.log(syncResult.message);
       }
     } catch (error: any) {
-      
       dispatch(showErrorToast("Falha ao obter os dados", error.message));
     }
   }, [userData, dispatch]);
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ModalComponentOrganism
-        modalVisible={modalVisible}
-        setModalVisible={() => setModalVisible(!modalVisible)}
-      />
-      <View style={styles.containerScroll}>
-        <StatusBarAtoms backgroundColor="transparent" barStyle="dark-content" />
-        <LinearGradient
-          colors={["#006400", "#20B2AA"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.gradientEffect}
+    <SafeAreaView style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ModalComponentOrganism
+          modalVisible={modalVisible}
+          setModalVisible={() => setModalVisible(!modalVisible)}
         />
-        <UserSectionOrganism />
-        <SyncMolecules handleSync={handleSync} />
-        <ItemListOrganism
+        <View style={styles.containerScroll}>
+          <StatusBarAtoms
+            backgroundColor="transparent"
+            barStyle="dark-content"
+          />
+          <LinearGradient
+            colors={[Colors.red, Colors.black]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.gradientEffect}
+          />
+          <UserSectionOrganism />
+          <SyncMolecules handleSync={handleSync} />
+          <View style={styles.contentTilte}>
+            <TextAtom style={styles.title} text={'ESCALA '+activeTab}/>
+          </View>
+          <ItemListOrganism
             data={escalaMotorista}
+            activeTab={activeTab}
             handleItemClick={(item) => handlerClickDetails(item)}
             handleOptionClick={(item: any) => {
               setModalVisible(true);
             }}
           />
-      </View>
-      <View style={styles.footerTabs}>
-        <TouchableOpacity onPress={() => setActiveTab("Entrada")}>
-          <IconAtom
-            name="home"
-            size={30}
-            color={activeTab === "Entrada" ? "#fff" : "grey"}
-            library="Ionicons"
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setActiveTab("Folga")}>
-          <IconAtom
-            name="bed"
-            size={30}
-            color={activeTab === "Folga" ? "#fff" : "grey"}
-            library="Ionicons"
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setActiveTab("Saida")}>
-          <IconAtom
-            name="exit"
-            size={30}
-            color={activeTab === "Saida" ? "#fff" : "grey"}
-            library="Ionicons"
-          />
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+        </View>
+        <View style={styles.footerTabs}>
+          <TouchableOpacity onPress={() => setActiveTab("Entrada")}>
+            <IconAtom
+              name="home"
+              size={30}
+              color={activeTab === "Entrada" ? Colors.red : Colors.black}
+              library="Ionicons"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setActiveTab("Folga")}>
+            <IconAtom
+              name="bed"
+              size={30}
+              color={activeTab === "Folga" ? Colors.red : Colors.black}
+              library="Ionicons"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setActiveTab("Saida")}>
+            <IconAtom
+              name="exit"
+              size={30}
+              color={activeTab === "Saida" ? Colors.red : Colors.black}
+              library="Ionicons"
+            />
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#010818",
+    backgroundColor: Colors.black,
   },
   containerScroll: {
-    flex: 1,
-    backgroundColor: "#010818",
-    height: 200,
+    flex: 0.65,
+    backgroundColor: Colors.black,
+    height: 0,
+  },
+  contentTilte: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  title: {
+    color: Colors.white,
+    fontWeight: '900',
+    fontSize: 22,
+    textTransform: 'uppercase'
   },
   footerTabs: {
     flexDirection: "row",
@@ -163,9 +185,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     width: "100%",
-    backgroundColor: "#333",
+    backgroundColor: Colors.gray,
     borderTopWidth: 1,
-    borderTopColor: "#006400",
+    borderTopColor: Colors.orange,
     padding: 20,
     paddingHorizontal: 40,
   },

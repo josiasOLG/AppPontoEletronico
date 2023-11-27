@@ -1,6 +1,6 @@
 // StatusBarAtoms.tsx
 import React, { useEffect } from 'react';
-import { StatusBar, StatusBarStyle, View, StyleSheet } from 'react-native';
+import { StatusBar, StatusBarStyle, View, StyleSheet, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 interface StatusBarAtomsProps {
@@ -23,6 +23,15 @@ const StatusBarAtoms: React.FC<StatusBarAtomsProps> = ({
   }, [backgroundColor, updateStatusBarColor]);
 
   const renderStatusBarBackground = () => {
+    // console.log(Platform.OS);
+    if (Platform.OS === 'ios') {
+      return (
+        <View style={[styles.container, { backgroundColor: 'transparent' }]}>
+          <StatusBar barStyle={barStyle} />
+        </View>
+      );
+    }  
+
     if (backgroundColor) {
       return (
         <View style={[styles.container, { backgroundColor }]}>

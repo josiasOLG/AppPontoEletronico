@@ -1,6 +1,9 @@
 export const Colors = {
-  primary: "#6200EA",
-  secondary: "#03DAC5",
+  red: "#AF1B3F",
+  black: "#272838",
+  orange: "#FFA62B",
+  gray: "#EDF2F4",
+  white: "#fff",
 };
 
 export const Spacing = {

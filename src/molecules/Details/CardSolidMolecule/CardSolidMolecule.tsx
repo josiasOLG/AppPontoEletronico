@@ -12,6 +12,7 @@ interface CardSolidMoleculeProps {
   value: number;
   size: number;
   botao: any; // Certifique-se de que este tipo está correto para as propriedades esperadas pelo CardTransparentMolecule
+  activeTab: string;
 }
 
 const CardSolidMolecule: React.FC<CardSolidMoleculeProps> = ({
@@ -20,6 +21,7 @@ const CardSolidMolecule: React.FC<CardSolidMoleculeProps> = ({
   value,
   size,
   botao,
+  activeTab
 }) => {
   return (
     <View style={styles.container}>
@@ -32,7 +34,7 @@ const CardSolidMolecule: React.FC<CardSolidMoleculeProps> = ({
             </View>
           </View>
           <View style={styles.cardButtom}>
-            <CardConfTransparentMolecule {...botao} />
+            <CardConfTransparentMolecule {...botao} activeTab={activeTab}/>
           </View>
         </>
       ) : type === "time" ? (

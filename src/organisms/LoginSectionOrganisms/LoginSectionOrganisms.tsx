@@ -27,7 +27,7 @@ interface LoginSectionProps {
 const styles = StyleSheet.create({
   containerCenter: {
     flex: 1,
-    backgroundColor: "#010818",
+    backgroundColor: "#272838",
     alignItems: "center",
     justifyContent: "center",
   },

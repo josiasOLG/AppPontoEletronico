@@ -21,6 +21,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import NavigationService from "./src/routes/NavigationService";
 import { syncData } from "./src/database/sync/SyncService";
 import { logError } from "./src/database/tables/LogErro";
+import useLocation from "./src/hook/useLocation";
+import { saveLocation } from "./src/secure/secureStoreService";
+import AppContent from "./AppContent";
 
 interface TextProps extends RNTextProps {
   children: React.ReactNode;
@@ -33,6 +36,7 @@ export const Text: React.FC<TextProps> = ({ style, ...props }) => {
 export default function App() {
   const [animationDone, setAnimationDone] = useState(false);
   const [hasLoggedInBefore, setHasLoggedInBefore] = useState(false);
+  const { location } = useLocation();
 
   const globalErrorHandler = (error: any, isFatal: any) => {
     // console.log("Erro capturado globalmente:", error, isFatal);
@@ -44,6 +48,13 @@ export default function App() {
   };
   
   ErrorUtils.setGlobalHandler(globalErrorHandler);
+
+  useEffect(() => {
+    if (location) {
+      saveLocation(location.coords).catch(console.error);
+    }
+  }, [location]);
+  
 
   let [fontsLoaded] = useFonts({
     Roboto_400Regular,
@@ -89,13 +100,7 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      {animationDone ? (
-        <>
-          <Routes />
-        </>
-      ) : (
-        <SplashScreen onAnimationFinish={() => setAnimationDone(true)} />
-      )}
+      <AppContent animationDone={animationDone} onAnimationFinish={() => setAnimationDone(true)}></AppContent>
       <CustomToast />
     </Provider>
   );

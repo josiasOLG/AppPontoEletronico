@@ -41,8 +41,8 @@ const Wave = () => {
     >
       <Defs>
         <LinearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%" >
-          <Stop offset="0%" stopColor="#4cbd4c" stopOpacity="1" />
-          <Stop offset="100%" stopColor="#20B2AA" stopOpacity="1" />
+          <Stop offset="0%" stopColor="#AF1B3F" stopOpacity="1" />
+          <Stop offset="100%" stopColor="#272838" stopOpacity="1" />
         </LinearGradient>
       </Defs>
       <AnimatedPath d={d} fill="url(#gradient)" />

@@ -1,11 +1,12 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import Login from '../pages/Login/Login';
+import LoginIndex from '../pages/Login';
 import Home from '../pages/Home/Home';
 import Details from '../pages/Details/Details';
 import { navigationRef } from './NavigationService';
 import Biometric from '../pages/Biometric/Biometric';
+import CameraPoint from '../pages/Camera/CameraPoint';
 
 const Stack = createStackNavigator();
 
@@ -45,8 +46,8 @@ export default function Routes() {
       <Stack.Navigator>
      
         <Stack.Screen 
-          name="Login" 
-          component={Login} 
+          name="LoginIndex" 
+          component={LoginIndex} 
           options={getScreenOptions({ showHeader: false })}
         />
          <Stack.Screen 
@@ -62,6 +63,11 @@ export default function Routes() {
         <Stack.Screen 
           name="Details" 
           component={Details} 
+          options={getScreenOptions({ theme: 'dark'})} //Depois de logado
+        />
+         <Stack.Screen 
+          name="CameraPoint" 
+          component={CameraPoint} 
           options={getScreenOptions({ theme: 'dark'})} //Depois de logado
         />
       </Stack.Navigator>

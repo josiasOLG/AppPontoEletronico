@@ -1,10 +1,14 @@
-import React from 'react';
-import { View, StyleSheet, ViewStyle, TextStyle } from 'react-native';
-import CardSolidMolecule from '../../../molecules/Details/CardSolidMolecule/CardSolidMolecule';
-import CardTransparentMolecule from '../../../molecules/Details/CardTransparentMolecule/CardTransparentMolecule';
-import TextAtom from '../../../atoms/TextAtom/TextAtom';
-import { RouteProp } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
+import React, {useEffect} from "react";
+import { View, StyleSheet, ViewStyle, TextStyle } from "react-native";
+import CardSolidMolecule from "../../../molecules/Details/CardSolidMolecule/CardSolidMolecule";
+import CardTransparentMolecule from "../../../molecules/Details/CardTransparentMolecule/CardTransparentMolecule";
+import TextAtom from "../../../atoms/TextAtom/TextAtom";
+import { RouteProp } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { setButtonStatus, setStatusText } from "../../../redux/actions/timeCircle.actions";
+import { formatarData } from "../../../Utils/Utils";
+import  { styles } from "./DetailsOrganism.style"
+import useMotoristaData from "../../../hook/useMotoristaData";
 
 interface IconProps {
   name: string;
@@ -13,7 +17,7 @@ interface IconProps {
 
 interface CardSolidProps {
   title: string;
-  type: 'percentage' | 'time';
+  type: "percentage" | "time";
   value: number;
   size: number;
   botao: any;
@@ -24,17 +28,13 @@ interface CardTransparentProps {
   icons: IconProps[];
 }
 
+const DetailsOrganism: React.FC<any> = ({ activeTab }) => {
+  const motoristaData = useSelector(
+    (state: any) => state.motorista.motoristaData
+  );
+  const dispatch = useDispatch();
 
-
-const DetailsOrganism: React.FC<any> = () => {
-  const motoristaData = useSelector((state: any) => state.motorista.motoristaData);
-  let tempoParaLiberacao = 0; // valor padrão
-  if (motoristaData) {
-    const dataEntrada = new Date();
-    const dataSaida = new Date(motoristaData.DataEntradaProgramada);
-    const diff = dataSaida.getTime() - dataEntrada.getTime();
-        tempoParaLiberacao = Math.floor(diff / (1000 * 60));
-  }
+  const { tempoParaLiberacao, dataProgramada } = useMotoristaData(activeTab, motoristaData);
 
   const cardSolidData: CardSolidProps[] = [
     {
@@ -44,7 +44,7 @@ const DetailsOrganism: React.FC<any> = () => {
       size: 130,
       botao: {
         title: "CONFIRMAR",
-      }
+      },
     },
     {
       title: "Tempo para liberação",
@@ -52,49 +52,26 @@ const DetailsOrganism: React.FC<any> = () => {
       value: tempoParaLiberacao,
       size: 130,
       botao: {
-        title: "AGUARDAR"
-      }
-    }
+        title: "AGUARDAR",
+      },
+    },
   ];
 
   return (
     <View style={styles.gridItem}>
       <View style={styles.cardRow}>
         {cardSolidData.map((data, index) => (
-          <CardSolidMolecule key={index} {...data} />
+          <CardSolidMolecule activeTab={activeTab} key={index} {...data} />
         ))}
       </View>
       <View style={styles.gridItemTextCenter}>
         <TextAtom text="Data e hora - Pegada" style={styles.dataHoraText} />
-        <TextAtom text="23/01/2023 12:00" style={styles.dataHora} />
+        <TextAtom text={formatarData(dataProgramada)} style={styles.dataHora} />
       </View>
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  gridItem: {
-    width: "100%",
-    paddingHorizontal: 10,
-    paddingTop: 60,
-  } as ViewStyle,
-  cardRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  } as ViewStyle,
-  gridItemTextCenter: {
-    alignItems: 'center',
-    justifyContent: 'center'
-  } as ViewStyle,
-  dataHoraText: {
-    color: "#fff",
-    fontSize: 18,
-  } as TextStyle,
-  dataHora: {
-    color: "#24fd88",
-    fontSize: 30,
-    fontWeight: '900'
-  } as TextStyle,
-});
+
 
 export default DetailsOrganism;

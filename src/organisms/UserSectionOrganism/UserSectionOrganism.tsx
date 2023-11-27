@@ -26,7 +26,7 @@ const UserSectionOrganism: React.FC<any> = () => {
   const logout = async () => {
     await AsyncStorage.removeItem("isLoggedIn");
     await AsyncStorage.removeItem("biometric");
-    NavigationService.navigate("Login");
+    NavigationService.navigate("LoginIndex");
   };
 
   useEffect(() => {

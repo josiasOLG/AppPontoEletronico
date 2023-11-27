@@ -24,6 +24,7 @@ const refreshToken = async () => {
 
 const setAuthorizationHeader = async (config) => {
   const token = await SecureStore.getItemAsync('accessToken');
+  config.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (token) config.headers['Authorization'] = `Bearer ${token}`;
   return config;
 };
@@ -53,3 +54,10 @@ axiosInstance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+axiosInstance.interceptors.request.use(config => {
+  if (config.method === 'get') {
+    config.params = { ...config.params, _t: new Date().getTime() };
+  }
+  return config;
+}, error => Promise.reject(error));

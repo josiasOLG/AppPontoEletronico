@@ -16,53 +16,41 @@ const TimeCircle: React.FC<TimeCircleProps> = ({ minutes, size }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setTotalTime(minutes * 60);
+    const newTotalTime = minutes * 60;
+    setTotalTime(newTotalTime);
     setElapsedTime(0);
-    const intervalId = setInterval(() => {
-      setElapsedTime((prevTime) => {
-        if (prevTime >= TOTAL_TIME - 1) {
-          clearInterval(intervalId);
-          return TOTAL_TIME;
-        }
-        return prevTime + 1;
-      });
-    }, 1000);
 
-    return () => {
-      clearInterval(intervalId);
-    };
+    if (newTotalTime > 0) {
+      const intervalId = setInterval(() => {
+        setElapsedTime((prevTime) => {
+          if (prevTime >= newTotalTime - 1) {
+            clearInterval(intervalId);
+            return newTotalTime;
+          }
+          return prevTime + 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(intervalId);
+    }
   }, [minutes]);
 
 
-  useEffect(() => {
-    if (minutes <= 5 && minutes >= 0) {
-      dispatch(setStatusText('No Horário'));
-      dispatch(setButtonStatus(false));
-    } else if (minutes < 0 && minutes >= -10) {
-      dispatch(setStatusText('ATRASADO'));
-      dispatch(setButtonStatus(false));
-    } else if (minutes < -10) {
-      dispatch(setStatusText('ATRASADO'));
-      dispatch(setButtonStatus(true));
-    } else {
-      dispatch(setStatusText('AGUARDE'));
-      dispatch(setButtonStatus(true));
-    }
-  }, [minutes, dispatch]);
-  
-  
-  
-
   const getProgressColor = () => {
-    return "#ff3131";
+    return "#AF1B3F";
   };
 
   const radius = size / 2; // Agora o raio é baseado no tamanho fornecido
   const strokeWidth = 8;
   const circleCircumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circleCircumference * (1 - elapsedTime / TOTAL_TIME);
+  const safeTotalTime = TOTAL_TIME || 0;
+  const strokeDashoffset = circleCircumference * (1 - elapsedTime / safeTotalTime);
 
   const formatRemainingTime = (remainingTime: number) => {
+    if (remainingTime >= 0 && remainingTime <= -10) {
+      remainingTime = Math.abs(remainingTime);
+    }
+
     if (remainingTime < 60) {
       return `${remainingTime} min`;
     }
@@ -79,7 +67,7 @@ const TimeCircle: React.FC<TimeCircleProps> = ({ minutes, size }) => {
       <Svg width={size} height={size} style={styles.svg}>
         <G rotation="-90" origin={`${radius}, ${radius}`}>
           <Circle
-            stroke="#1f2535"
+            stroke="#EDF2F4"
             fill="none"
             cx={radius}
             cy={radius}
@@ -100,7 +88,7 @@ const TimeCircle: React.FC<TimeCircleProps> = ({ minutes, size }) => {
           />
         </G>
         <Circle
-          fill="#ff3131"
+          fill="#AF1B3F"
           cx={radius}
           cy={radius}
           r={radius - strokeWidth - 15}

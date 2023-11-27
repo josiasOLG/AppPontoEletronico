@@ -21,6 +21,8 @@ export const initEscalasMotoristasTable = async () => {
           HoraInicioProgramada TEXT,
           DataSaidaProgramada TEXT,
           HoraFimProgramada TEXT,
+          HoraFolgaProgramada TEXT,
+          DataFolgaProgramada TEXT,
           EmployeeId TEXT,
           LocalEntradaProgramadoId TEXT,
           LocalEntradaProgramado TEXT
@@ -42,6 +44,8 @@ export const insertIntoEscalasMotoristas = async (data: {
   HoraInicioProgramada: string;
   DataSaidaProgramada: string;
   HoraFimProgramada: string;
+  HoraFolgaProgramada: string;
+  DataFolgaProgramada: string;
   EmployeeId: string;
   LocalEntradaProgramadoId: string;
   LocalEntradaProgramado: string;
@@ -55,8 +59,8 @@ export const insertIntoEscalasMotoristas = async (data: {
     db.transaction((tx: any) => {
       tx.executeSql(
         `
-        INSERT INTO EscalasMotoristas (Id, Descricao, BateuPonto, DataEntradaProgramada, HoraInicioProgramada,DataSaidaProgramada,HoraFimProgramada, EmployeeId, LocalEntradaProgramadoId, LocalEntradaProgramado)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO EscalasMotoristas (Id, Descricao, BateuPonto, DataEntradaProgramada, HoraInicioProgramada,DataSaidaProgramada,HoraFimProgramada, HoraFolgaProgramada, DataFolgaProgramada, EmployeeId, LocalEntradaProgramadoId, LocalEntradaProgramado)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ? ,? , ?, ?, ?);
       `,
         [
           data.Id,
@@ -66,6 +70,8 @@ export const insertIntoEscalasMotoristas = async (data: {
           data.HoraInicioProgramada,
           data.DataSaidaProgramada,
           data.HoraFimProgramada,
+          data.HoraFolgaProgramada,
+          data.DataFolgaProgramada,
           data.EmployeeId,
           data.LocalEntradaProgramadoId,
           data.LocalEntradaProgramado,
@@ -134,6 +140,8 @@ export const updateEscalasMotoristas = async (data: {
   HoraInicioProgramada: string;
   DataSaidaProgramada: string;
   HoraFimProgramada: string;
+  DataFolgaProgramada: string;
+  HoraFolgaProgramada: string;
   EmployeeId: string;
   LocalEntradaProgramadoId: string;
   LocalEntradaProgramado: string;
@@ -148,7 +156,7 @@ export const updateEscalasMotoristas = async (data: {
       tx.executeSql(
         `
           UPDATE EscalasMotoristas 
-          SET Descricao = ?, BateuPonto = ?, DataEntradaProgramada = ?, HoraInicioProgramada = ?, DataSaidaProgramada = ?, HoraFimProgramada = ?, EmployeeId = ?, LocalEntradaProgramadoId = ?, LocalEntradaProgramado = ?
+          SET Descricao = ?, BateuPonto = ?, DataEntradaProgramada = ?, HoraInicioProgramada = ?, DataSaidaProgramada = ?, HoraFimProgramada = ?, HoraFolgaProgramada = ?, DataFolgaProgramada = ?, EmployeeId = ?, LocalEntradaProgramadoId = ?, LocalEntradaProgramado = ?
           WHERE Id = ?;
         `,
         [
@@ -158,6 +166,8 @@ export const updateEscalasMotoristas = async (data: {
           data.HoraInicioProgramada,
           data.DataSaidaProgramada,
           data.HoraFimProgramada,
+          data.HoraFolgaProgramada,
+          data.DataFolgaProgramada,
           data.EmployeeId,
           data.LocalEntradaProgramadoId,
           data.LocalEntradaProgramado,
@@ -192,6 +202,23 @@ export const existsInEscalasMotoristas = async (id: string): Promise<boolean> =>
             resolve(false);
           }
         },
+        (_, error: any) => {
+          reject(error);
+          return true;
+        }
+      );
+    });
+  });
+};
+
+
+export const clearEscalasMotoristasTable = async () => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        `DELETE FROM EscalasMotoristas;`, // Instrução SQL para limpar a tabela
+        [],
+        (_, result) => resolve(result), // Em caso de sucesso
         (_, error: any) => {
           reject(error);
           return true;

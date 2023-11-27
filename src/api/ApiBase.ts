@@ -7,6 +7,7 @@ export default abstract class ApiBase {
   public async get<T>(url?: string): Promise<T> {
     try {
       const response = await axiosInstance.get<T>(`${this.baseUrl}${url}`);
+      // console.log('response.data>>',response.data.EscalaMotoristasDTO.EscalaMotoristaEntrada);
       return response.data;
     } catch (error) {
       handleAxiosError(error);
@@ -22,6 +23,21 @@ export default abstract class ApiBase {
       handleAxiosError(error);
       throw error;
     }
+  }
+
+  public async postFormData<T, U>(url: string, data: T) {
+    try {
+      const response = await axiosInstance.post<U>(`${this.baseUrl}${url}`, data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      handleAxiosError(error);
+      throw error;
+    }
+    
   }
 
   public async put<T, U>(url: string, data: T): Promise<U> {

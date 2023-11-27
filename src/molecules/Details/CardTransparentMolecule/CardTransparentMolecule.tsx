@@ -2,7 +2,6 @@ import React from "react";
 import { View, StyleSheet, ViewStyle, TextStyle } from "react-native";
 import TextAtom from "../../../atoms/TextAtom/TextAtom";
 import IconGroupMolecule from "../IconGroupMolecule/IconGroupMolecule";
-import { Icon } from "../IconGroupMolecule/IconGroupMolecule"; // Importar a interface Icon se estiver em outro arquivo
 import ButtonAtom from "../../../atoms/ButtonAtom/ButtonAtom";
 import { useSelector } from "react-redux";
 

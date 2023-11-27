@@ -20,7 +20,7 @@ const PercentageCircle: React.FC<PercentageCircleProps> = ({ percentage, size })
       <Svg width={size} height={size} style={styles.svg}>
         <G rotation="-90" origin={`${radius}, ${radius}`}>
           <Circle
-            stroke="#1f2636"
+            stroke="#EDF2F4"
             fill="none"
             cx={radius}
             cy={radius}
@@ -29,7 +29,7 @@ const PercentageCircle: React.FC<PercentageCircleProps> = ({ percentage, size })
             strokeLinecap="round"
           />
           <Circle
-            stroke="#20ff88"
+            stroke="#FFA62B"
             fill="none"
             cx={radius}
             cy={radius}
@@ -41,7 +41,7 @@ const PercentageCircle: React.FC<PercentageCircleProps> = ({ percentage, size })
           />
         </G>
         <Circle
-          fill="#20ff88"
+          fill="#FFA62B"
           cx={radius}
           cy={radius}
           r={radius - strokeWidth - 15}

@@ -36,7 +36,7 @@ const LoginFormMolecules: React.FC<LoginFormProps> = ({
         secureTextEntry
       />
       <LinearGradient
-        colors={["#006400", "#20B2AA"]}
+        colors={["#AF1B3F", "#272838"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
@@ -52,8 +52,8 @@ const LoginFormMolecules: React.FC<LoginFormProps> = ({
           onValueChange={(value) => {
             setFieldValue("enableBiometry", value);
           }}
-          trackColor={{ false: "#767577", true: "#86ffd9" }}
-          thumbColor={values.enableBiometry ? "#20ff88" : "#f4f3f4"}
+          trackColor={{ false: "#EDF2F4", true: "#AF1B3F" }}
+          thumbColor={values.enableBiometry ? "#AF1B3F" : "#EDF2F4"}
         />
       </View>
     </View>
