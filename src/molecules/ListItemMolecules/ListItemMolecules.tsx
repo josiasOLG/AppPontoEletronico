@@ -28,7 +28,7 @@ const ListItemMolecules: React.FC<ListItemProps> = ({
   };
   const isDisabled = item.BateuPonto === 1;
   const linearGradientColors = isDisabled
-    ? [Colors.orange, Colors.orange]
+    ? [Colors.purple, Colors.purple]
     : [Colors.white, Colors.white];
 
   // console.log(item);
@@ -53,7 +53,7 @@ const ListItemMolecules: React.FC<ListItemProps> = ({
             style={styles.listItemText}
             text={
               item.LocalEntradaProgramado
-                ? 'Local: ' + item.LocalEntradaProgramado
+                ? "Local: " + item.LocalEntradaProgramado
                 : item.Descricao === "folga"
                 ? "Dia de folga"
                 : ""

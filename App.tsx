@@ -24,6 +24,9 @@ import { logError } from "./src/database/tables/LogErro";
 import useLocation from "./src/hook/useLocation";
 import { saveLocation } from "./src/secure/secureStoreService";
 import AppContent from "./AppContent";
+import moment from "moment-timezone";
+
+moment.tz.setDefault("America/Sao_Paulo");
 
 interface TextProps extends RNTextProps {
   children: React.ReactNode;
@@ -46,7 +49,7 @@ export default function App() {
       error.stack
     );
   };
-  
+
   ErrorUtils.setGlobalHandler(globalErrorHandler);
 
   useEffect(() => {
@@ -54,7 +57,6 @@ export default function App() {
       saveLocation(location.coords).catch(console.error);
     }
   }, [location]);
-  
 
   let [fontsLoaded] = useFonts({
     Roboto_400Regular,
@@ -77,7 +79,7 @@ export default function App() {
         if (isBiometricEnabled === "true") {
           NavigationService.navigate("Biometric");
         } else {
-          NavigationService.navigate("Home");
+          NavigationService.navigate("Main");
         }
       }
     };
@@ -100,7 +102,10 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <AppContent animationDone={animationDone} onAnimationFinish={() => setAnimationDone(true)}></AppContent>
+      <AppContent
+        animationDone={animationDone}
+        onAnimationFinish={() => setAnimationDone(true)}
+      ></AppContent>
       <CustomToast />
     </Provider>
   );

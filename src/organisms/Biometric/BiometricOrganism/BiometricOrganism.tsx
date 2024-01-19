@@ -15,8 +15,8 @@ const BiometricOrganism: React.FC<BiometricOrganismProps> = ({
 }) => {
   return (
     <View style={styles.container}>
-      <BiometricHeaderMolecule onAuthenticate={onAuthenticate} />
       <BiometricContentMolecule onAnimationFinish={onAnimationFinish} />
+      <BiometricHeaderMolecule onAuthenticate={onAuthenticate} />
     </View>
   );
 };
@@ -27,6 +27,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-
 });
 export default BiometricOrganism;

@@ -32,9 +32,9 @@ const LoadingLogin: React.FC = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container2}>
         <LinearGradient
-          colors={["#AF1B3F", "#272838"]}
+          colors={["#34AADC", "#0A617C", "#007AFF"]}
           start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
+          end={{ x: 0, y: 1 }}
           style={styles.gradientEffect}
         >
           <View style={stylesIndex.content}>
@@ -46,7 +46,7 @@ const LoadingLogin: React.FC = () => {
               <IconAtom
                 name="spinner"
                 size={50}
-                color="#FFF"
+                color="#333"
                 library="FontAwesome"
               />
             </Animated.View>

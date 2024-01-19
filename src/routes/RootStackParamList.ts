@@ -4,4 +4,5 @@ export type RootStackParamList = {
   Details: { param: any };
   Biometric: undefined;
   CameraPoint: { param: any };
+  Main: undefined;
 };

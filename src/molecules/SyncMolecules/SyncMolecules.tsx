@@ -47,7 +47,12 @@ const SyncMolecules: React.FC<UserSectionProps> = ({ handleSync }) => {
         <View style={styles.containerBackground}>
           <View style={styles.iconColumn}>
             <Animated.View style={{ transform: [{ rotate: spin }] }}>
-              <IconAtom name="sync" size={30} color="red" library="Ionicons" />
+              <IconAtom
+                name="sync"
+                size={30}
+                color="white"
+                library="Ionicons"
+              />
             </Animated.View>
           </View>
           <View style={styles.textColumn}>
@@ -64,12 +69,14 @@ const SyncMolecules: React.FC<UserSectionProps> = ({ handleSync }) => {
 };
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
+    position: "absolute",
+    width: "80%",
+    top: -35,
   },
   containerBackground: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#5856D6",
     borderRadius: 10,
     padding: 10,
   },
@@ -82,12 +89,12 @@ const styles = StyleSheet.create({
     flex: 0.8,
   },
   upperText: {
-    color: "#333",
+    color: "#fff",
     fontSize: 20,
     fontWeight: "bold",
   },
   lowerText: {
-    color: "#333",
+    color: "#fff",
     fontSize: 16,
   },
   syncIconContainer: {},

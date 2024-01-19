@@ -12,14 +12,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import NavigationService from "../../routes/NavigationService";
 import { useSelector } from "react-redux";
 import { getProfile } from "../../secure/secureStoreService";
+import SyncMolecules from "../../molecules/SyncMolecules/SyncMolecules";
 
-interface RootState {
-  login: {
-    userData: any;
-  };
-}
+type UserSectionProps = {
+  handleSync: () => Promise<void>;
+};
 
-const UserSectionOrganism: React.FC<any> = () => {
+const UserSectionOrganism: React.FC<UserSectionProps> = ({ handleSync }) => {
   const [currentDateString, setCurrentDateString] = useState("");
   const [profile, setProfile] = useState<any>();
 
@@ -30,8 +29,9 @@ const UserSectionOrganism: React.FC<any> = () => {
   };
 
   useEffect(() => {
-    const fetchProfile = async () => {  // Renomeada para evitar confusão
-      getProfile()  // Chamando a função importada
+    const fetchProfile = async () => {
+      // Renomeada para evitar confusão
+      getProfile() // Chamando a função importada
         .then((profile) => {
           if (profile !== null) {
             setProfile(profile);
@@ -41,32 +41,31 @@ const UserSectionOrganism: React.FC<any> = () => {
           // Tratar erros aqui
         });
     };
-    fetchProfile();  // Chamada inicial aqui
+    fetchProfile(); // Chamada inicial aqui
     setCurrentDateString(getCurrentDateInPortuguese());
   }, []);
-  
 
   return (
     <View style={styles.userSection}>
       <View style={styles.column1}>
-        <TextAtom style={styles.dia} text={`${currentDateString}, bom dia`} />
-        <TextAtom
-          style={styles.userName}
-          text={profile?.firstName + " " + profile?.lastName}
-        />
-      </View>
-      <View style={styles.column2}>
-        <ButtonAtom onPress={() => logout()}>
-          <IconAtom
-            name="log-out-outline"
-            size={24}
-            color="white"
-            library="Ionicons"
+        <View>
+          <ProfileImageMolecules imageUrl="https://www.w3schools.com/howto/img_avatar.png" />
+          <ButtonAtom style={styles.logout} onPress={() => logout()}>
+            <IconAtom
+              name="log-out-outline"
+              size={24}
+              color="white"
+              library="Ionicons"
+            />
+          </ButtonAtom>
+        </View>
+        <View style={styles.center}>
+          <TextAtom
+            style={styles.userName}
+            text={profile?.firstName + " " + profile?.lastName}
           />
-        </ButtonAtom>
-      </View>
-      <View style={styles.column3}>
-        <ProfileImageMolecules imageUrl="https://www.w3schools.com/howto/img_avatar.png" />
+          <TextAtom style={styles.dia} text={`${currentDateString}, bom dia`} />
+        </View>
       </View>
     </View>
   );
@@ -74,32 +73,38 @@ const UserSectionOrganism: React.FC<any> = () => {
 
 const styles = StyleSheet.create({
   userSection: {
-    flexDirection: "row",
+    flex: 1,
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "center",
     backgroundColor: "transparent",
-    paddingTop: 20,
-    paddingBottom: 20,
     paddingHorizontal: 20,
   },
-  column1: {
-    flex: 0.6,
+  center: {
     justifyContent: "center",
-    alignItems: "flex-start",
+    alignItems: "center",
+  },
+  logout: {
+    position: "absolute",
+    right: -100,
+  },
+  column1: {
+    flex: 2,
+    justifyContent: "center",
+    alignItems: "center",
   },
   column2: {
-    flex: 0.2,
-    justifyContent: "flex-end",
-    alignItems: "flex-end",
+    flex: 0.5,
+    justifyContent: "center",
+    alignItems: "center",
   },
   column3: {
-    flex: 0.2,
+    flex: 0.5,
     justifyContent: "center",
     alignItems: "center",
   },
   userName: {
     color: "#fff",
-    fontSize: 25,
+    fontSize: 24,
     fontWeight: "bold",
   },
   dia: {

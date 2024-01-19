@@ -10,7 +10,7 @@ export default abstract class ApiBase {
       // console.log('response.data>>',response.data.EscalaMotoristasDTO.EscalaMotoristaEntrada);
       return response.data;
     } catch (error) {
-      handleAxiosError(error);
+      handleAxiosError(error, url);
       throw error;
     }
   }
@@ -20,7 +20,7 @@ export default abstract class ApiBase {
       const response = await axiosInstance.post<U>(`${this.baseUrl}${url}`, data);
       return response.data;
     } catch (error) {
-      handleAxiosError(error);
+      handleAxiosError(error, data);
       throw error;
     }
   }
@@ -34,7 +34,7 @@ export default abstract class ApiBase {
       });
       return response.data;
     } catch (error) {
-      handleAxiosError(error);
+      handleAxiosError(error, data);
       throw error;
     }
     
@@ -45,7 +45,7 @@ export default abstract class ApiBase {
       const response = await axiosInstance.put<U>(`${this.baseUrl}${url}`, data);
       return response.data;
     } catch (error) {
-      handleAxiosError(error);
+      handleAxiosError(error, data);
       throw error;
     }
   }
@@ -55,7 +55,7 @@ export default abstract class ApiBase {
       const response = await axiosInstance.patch<U>(`${this.baseUrl}${url}`, data);
       return response.data;
     } catch (error) {
-      handleAxiosError(error);
+      handleAxiosError(error, data);
       throw error;
     }
   }
@@ -65,7 +65,7 @@ export default abstract class ApiBase {
       const response = await axiosInstance.delete<T>(`${this.baseUrl}${url}`);
       return response.data;
     } catch (error) {
-      handleAxiosError(error);
+      handleAxiosError(error, url);
       throw error;
     }
   }

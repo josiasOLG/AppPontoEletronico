@@ -1,24 +1,41 @@
-import React from 'react';
+import React from "react";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { StyleProp, ViewStyle } from "react-native";
 
-type LibraryType = 'FontAwesome' | 'Ionicons' | 'MaterialIcons';
+type LibraryType = "FontAwesome" | "Ionicons" | "MaterialIcons";
 
 type IconProps = {
   name: string;
   size: number;
   color: string;
   library?: LibraryType;
+  style?: StyleProp<ViewStyle>; // Tipo correto para estilos
 };
 
-const IconAtom: React.FC<IconProps> = ({ name, size, color, library = 'FontAwesome', ...props }) => {
+const IconAtom: React.FC<IconProps> = ({
+  name,
+  size,
+  color,
+  library = "FontAwesome",
+  style,
+  ...props
+}) => {
+  const iconProps = {
+    name,
+    size,
+    color,
+    style,
+    ...props,
+  };
+
   switch (library) {
-    case 'Ionicons':
-      return <Ionicons {...props} name={name} size={size} color={color} />;
-    case 'MaterialIcons':
-      return <MaterialIcons {...props} name={name} size={size} color={color} />;
+    case "Ionicons":
+      return <Ionicons {...iconProps} />;
+    case "MaterialIcons":
+      return <MaterialIcons {...iconProps} />;
     default:
-    case 'FontAwesome':
-      return <FontAwesome {...props} name={name} size={size} color={color} />;
+    case "FontAwesome":
+      return <FontAwesome {...iconProps} />;
   }
 };
 

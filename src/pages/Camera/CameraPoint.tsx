@@ -37,6 +37,7 @@ const CameraPoint: React.FC<DetailsScreenProps> = ({ route }) => {
       try {
         const newPhotoUri = await saveImageToPermanentStorage(photo.uri);
         const imageBase64 = await reduzirImage(newPhotoUri);
+        // console.log('imageBase64>',imageBase64);
         setPhotoUri(newPhotoUri);
         setimagem(imageBase64);
         setIsLoading(false);

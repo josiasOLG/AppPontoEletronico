@@ -22,7 +22,7 @@ export const syncData = async (userData: any) => {
       encodeURIComponent(dateForAPI)
     );
     const data = response;
-    console.log('data.EscalaMotoristasDTO.EscalaMotoristaEntradas>>',data.EscalaMotoristasDTO.EscalaMotoristaEntrada);
+
     // Vinculando DataEntradaProgramada e HoraInicioProgramada de EscalaMotoristaEntrada a EscalaMotoristaSaida
     // data.EscalaMotoristasDTO.EscalaMotoristaEntrada.forEach((entrada) => {
     //   const saidasCorrespondentes = data.EscalaMotoristasDTO.EscalaMotoristaSaida.filter(

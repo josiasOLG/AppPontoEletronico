@@ -17,8 +17,8 @@ export const saveImageToPermanentStorage = async (photoUri: string) => {
 export const reduzirImage = async (imageUri: string) => {
   const manipResult = await ImageManipulator.manipulateAsync(
     imageUri,
-    [{ resize: { width: 500, height: 500 } }],
-    { format: ImageManipulator.SaveFormat.JPEG, compress: 0.8, base64: true },
+    [{ resize: { width: 300 } }],
+    { format: ImageManipulator.SaveFormat.JPEG, compress: 0.5, base64: true },
   );
   return manipResult.base64;
 };

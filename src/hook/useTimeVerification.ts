@@ -5,6 +5,7 @@ import { PontoEletronicoDTO } from '../api/dtos/PontoEletronicoDTO';
 import CameraAPI from '../api/camera/cameraAPI';
 import moment from 'moment-timezone';
 import { hideLoading, showLoading } from '../redux/actions/loadingActions';
+import { converterParaISO } from '../Utils/Utils';
 
 
 /**
@@ -42,19 +43,19 @@ export const useTimeVerification = (motoristaData, imagem, param, onSuccess, dis
       dispatch(showLoading());
       const location = await getLocation();
       const login = await getLogin();
-
+      let currentTime = moment.tz('America/Sao_Paulo').toISOString();
       let data: PontoEletronicoDTO = {
         EscalaMotoristaId: motoristaData.Id,
-        Latitude: location.latitude,
-        Longitude: location.longitude,
-        CurrentTime: new Date().toISOString(),
-        DataEntrada: motoristaData?.HoraInicioProgramada ? motoristaData?.HoraInicioProgramada :  motoristaData?.HoraFimProgramada,
-        DataSaida: motoristaData?.HoraFimProgramada ? motoristaData?.HoraFimProgramada :  motoristaData?.HoraInicioProgramada,
+        Latitude: location?.latitude,
+        Longitude: location?.longitude,
+        CurrentTime: converterParaISO(moment().format()),
+        DataEntrada: motoristaData?.HoraInicioProgramada ? converterParaISO(motoristaData?.HoraInicioProgramada) :  converterParaISO(motoristaData?.HoraFimProgramada),
+        DataSaida: motoristaData?.HoraFimProgramada ? converterParaISO(motoristaData?.HoraFimProgramada) :  converterParaISO(motoristaData?.HoraInicioProgramada),
         Tipo: "Data" + param.activeTab,
         EmployeeId: motoristaData.EmployeeId,
         LocalSaidaProgramadoId: motoristaData.LocalEntradaProgramadoId,
         Digital: "1",
-        Foto: imagem,
+        Foto: imagem, 
         CodigoFuncionario: login,
       };
       console.log(data);

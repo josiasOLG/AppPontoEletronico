@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
+  Dimensions,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import StatusBarAtoms from "../../atoms/StatusBar/StatusBar";
@@ -41,6 +42,7 @@ type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 type Props = {
   navigation: HomeScreenNavigationProp;
 };
+const { width, height } = Dimensions.get("window");
 
 const Home: React.FC<Props> = () => {
   const [activeTab, setActiveTab] = useState("Entrada");
@@ -109,50 +111,66 @@ const Home: React.FC<Props> = () => {
             barStyle="dark-content"
           />
           <LinearGradient
-            colors={[Colors.red, Colors.black]}
+            colors={["#34AADC", "#0A617C", "#007AFF"]}
             start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
+            end={{ x: 0, y: 1 }}
             style={styles.gradientEffect}
-          />
-          <UserSectionOrganism />
-          <SyncMolecules handleSync={handleSync} />
-          <View style={styles.contentTilte}>
-            <TextAtom style={styles.title} text={'ESCALA '+activeTab}/>
+          >
+            <UserSectionOrganism handleSync={handleSync} />
+          </LinearGradient>
+          <View style={styles.contentBody}>
+            <View style={styles.center}>
+              <SyncMolecules handleSync={handleSync} />
+            </View>
+
+            <View style={styles.contentTilte}>
+              <TextAtom style={styles.title} text={"Escala programa"} />
+            </View>
+            <View style={styles.containerFooter}>
+              <View
+                style={[
+                  styles.footerTabs,
+                  {
+                    backgroundColor:
+                      activeTab === "Entrada"
+                        ? Colors.blueDark
+                        : activeTab === "Saida"
+                        ? Colors.red
+                        : activeTab === "Folga"
+                        ? Colors.purple // Substitua Colors.red pela cor desejada para "Folga"
+                        : Colors.blueDark, // Cor padrão caso nenhuma das condições acima seja verdadeira
+                  },
+                ]}
+              >
+                <TouchableOpacity onPress={() => setActiveTab("Entrada")}>
+                  <TextAtom text="Entrada" style={styles.textTab} />
+                  {activeTab === "Entrada" && (
+                    <View style={styles.barraSelected} />
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setActiveTab("Saida")}>
+                  <TextAtom text="Saida" style={styles.textTab} />
+                  {activeTab === "Saida" && (
+                    <View style={styles.barraSelected} />
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setActiveTab("Folga")}>
+                  <TextAtom text="Folga" style={styles.textTab} />
+                  {activeTab === "Folga" && (
+                    <View style={styles.barraSelected} />
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
+            <ItemListOrganism
+              data={escalaMotorista}
+              activeTab={activeTab}
+              handleItemClick={(item) => handlerClickDetails(item)}
+              handleOptionClick={(item: any) => {
+                setModalVisible(true);
+              }}
+            />
           </View>
-          <ItemListOrganism
-            data={escalaMotorista}
-            activeTab={activeTab}
-            handleItemClick={(item) => handlerClickDetails(item)}
-            handleOptionClick={(item: any) => {
-              setModalVisible(true);
-            }}
-          />
-        </View>
-        <View style={styles.footerTabs}>
-          <TouchableOpacity onPress={() => setActiveTab("Entrada")}>
-            <IconAtom
-              name="home"
-              size={30}
-              color={activeTab === "Entrada" ? Colors.red : Colors.black}
-              library="Ionicons"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setActiveTab("Folga")}>
-            <IconAtom
-              name="bed"
-              size={30}
-              color={activeTab === "Folga" ? Colors.red : Colors.black}
-              library="Ionicons"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setActiveTab("Saida")}>
-            <IconAtom
-              name="exit"
-              size={30}
-              color={activeTab === "Saida" ? Colors.red : Colors.black}
-              library="Ionicons"
-            />
-          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -162,45 +180,65 @@ const Home: React.FC<Props> = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.black,
+    backgroundColor: Colors.white,
+  },
+  center: {
+    justifyContent: "center",
+    alignItems: "center",
   },
   containerScroll: {
-    flex: 0.65,
-    backgroundColor: Colors.black,
-    height: 0,
+    flex: 1,
+    backgroundColor: Colors.white,
+  },
+  contentBody: {
+    flex: 2,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    zIndex: 0,
+    position: "relative",
+    top: -10,
+    backgroundColor: Colors.white,
+  },
+  contentFooter: {
+    flex: 0.1,
   },
   contentTilte: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingHorizontal: width * 0.05, // 5% da largura da tela
+    paddingTop: height * 0.02, // 2% da altura da tela
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 40,
+  },
+  containerFooter: {
+    flex: 1,
+    marginTop: 20,
   },
   title: {
-    color: Colors.white,
-    fontWeight: '900',
-    fontSize: 22,
-    textTransform: 'uppercase'
+    color: Colors.black,
+    fontWeight: "900",
+    fontSize: 32, // Tamanho menor da fonte para telas pequenas
+    textTransform: "uppercase",
   },
   footerTabs: {
     flexDirection: "row",
     justifyContent: "space-between",
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    backgroundColor: Colors.gray,
-    borderTopWidth: 1,
-    borderTopColor: Colors.orange,
     padding: 20,
-    paddingHorizontal: 40,
+    paddingHorizontal: width * 0.1,
+  },
+  barraSelected: {
+    width: "100%",
+    height: 2,
+    backgroundColor: Colors.white,
+  },
+  textTab: {
+    color: Colors.white,
+    fontSize: 20,
+  },
+  blue: {
+    color: Colors.blue,
   },
   gradientEffect: {
-    position: "absolute",
-    width: "100%",
-    height: 300,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderBottomLeftRadius: 100,
-    borderBottomRightRadius: 0,
+    flex: 1,
   },
 });
 

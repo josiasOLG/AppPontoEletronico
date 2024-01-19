@@ -1,8 +1,7 @@
 import React from "react";
+import { StyleSheet, View } from "react-native";
 import TextAtom from "../../../atoms/TextAtom/TextAtom";
 import ButtonAtom from "../../../atoms/ButtonAtom/ButtonAtom";
-import IconAtom from "../../../atoms/IconAtom/IconAtom";
-import { StyleSheet, View } from "react-native";
 
 interface BiometricHeaderMoleculeProps {
   onAuthenticate: () => void;
@@ -13,13 +12,15 @@ const BiometricHeaderMolecule: React.FC<BiometricHeaderMoleculeProps> = ({
 }) => {
   return (
     <View style={styles.biometriaView}>
-      <TextAtom text="Autenticação" style={styles.title2} />
-      <TextAtom
-        text="Apos realizar a biometria você poderá acessar a plataforma"
-        style={styles.subtitle2}
-      />
       <ButtonAtom onPress={onAuthenticate} style={styles.btn}>
-        <IconAtom name="refresh" size={50} color="white" library="Ionicons" />
+        <View style={styles.fullWidth}>
+          <TextAtom text="Entrar como Heitor" style={styles.btnText} />
+        </View>
+      </ButtonAtom>
+      <ButtonAtom onPress={onAuthenticate} style={styles.link}>
+        <View style={styles.fullWidth}>
+          <TextAtom text="Deletar conta" style={styles.btnText} />
+        </View>
       </ButtonAtom>
     </View>
   );
@@ -27,29 +28,33 @@ const BiometricHeaderMolecule: React.FC<BiometricHeaderMoleculeProps> = ({
 
 const styles = StyleSheet.create({
   biometriaView: {
-    paddingTop: 80,
-  },
-  biometriaView2: {
-    paddingTop: 200,
-  },
-  title2: {
-    color: "#fff",
-    fontSize: 32,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 10,
-  },
-  subtitle2: {
-    color: "#fff",
-    fontSize: 22,
-    textAlign: "center",
-    lineHeight: 32,
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "stretch", // Alterado para 'stretch' para esticar os filhos
+    paddingTop: 40,
   },
   btn: {
-    justifyContent: 'center',
-    alignItems: 'center',
     marginTop: 20,
-    zIndex: 1
+    borderRadius: 15,
+    backgroundColor: "#34AADC",
+    paddingHorizontal: 60,
+    paddingVertical: 10,
+    width: "100%",
+  },
+  link: {
+    backgroundColor: "transparent",
+    marginTop: 10,
+    paddingHorizontal: 80,
+    paddingVertical: 10,
+    width: "100%",
+  },
+  fullWidth: {
+    width: "100%", // Garante que a View ocupe toda a largura do botão
+    alignItems: "center", // Centraliza o texto horizontalmente
+  },
+  btnText: {
+    color: "#fff",
+    fontSize: 20,
   },
 });
 

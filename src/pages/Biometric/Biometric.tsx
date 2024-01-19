@@ -22,18 +22,17 @@ const Biometric: React.FC = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <LinearGradient
-          colors={["#AF1B3F", "#272838"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.gradientEffect}
-        />
+      <LinearGradient
+        colors={["#34AADC", "#0A617C", "#007AFF"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={styles.container2}
+      >
         <BiometricOrganism
           onAuthenticate={authenticateUser}
           onAnimationFinish={authenticateUser}
         />
-      </View>
+      </LinearGradient>
     </SafeAreaView>
   );
 };
