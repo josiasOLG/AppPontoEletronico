@@ -1,5 +1,3 @@
-
-
 {
   "cli": {
     "version": ">= 5.4.0"
@@ -12,6 +10,9 @@
         "ENVIRONMENT": "dev",
         "API_URL": "http://api.trucogolds.info/api",
         "EXPO_ENV": "dev"
+      },
+      "android": {
+        "credentialsSource": "local"
       }
     },
     "preview": {
@@ -24,10 +25,13 @@
     "production": {
       "distribution": "store",
       "env": {
-        "ENVIRONMENT": "production"
+        "ENVIRONMENT": "dev",
+        "API_URL": "http://api.trucogolds.info/api",
+        "EXPO_ENV": "dev"
       },
       "android": {
         "releaseChannel": "production",
+        "credentialsSource": "local",
         "gradleCommand": ":app:assembleRelease"
       },
       "ios": {

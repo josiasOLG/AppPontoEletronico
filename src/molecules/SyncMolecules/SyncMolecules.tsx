@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, Animated, Easing } from "react-native";
 import IconAtom from "../../atoms/IconAtom/IconAtom";
 import TextAtom from "../../atoms/TextAtom/TextAtom";
 import ButtonAtom from "../../atoms/ButtonAtom/ButtonAtom";
+import { remFontSize } from "../../Utils/Utils";
+import { RFPercentage } from "react-native-responsive-fontsize";
 
 type UserSectionProps = {
   handleSync: () => Promise<void>;
@@ -71,7 +73,7 @@ const styles = StyleSheet.create({
   container: {
     position: "absolute",
     width: "80%",
-    top: -35,
+    top: -10,
   },
   containerBackground: {
     flexDirection: "row",
@@ -90,12 +92,12 @@ const styles = StyleSheet.create({
   },
   upperText: {
     color: "#fff",
-    fontSize: 20,
+    fontSize: RFPercentage(2),
     fontWeight: "bold",
   },
   lowerText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: RFPercentage(2),
   },
   syncIconContainer: {},
 });

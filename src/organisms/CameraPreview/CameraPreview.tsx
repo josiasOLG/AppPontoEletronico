@@ -26,7 +26,12 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
       </View> */}
       <View style={[styles.collum6, styles.right]}>
         <ButtonAtom onPress={onConfirm} style={styles.confBtn}>
-          <IconAtom color={Colors.orange} name="checkmark" size={50} library="Ionicons"/>
+          <IconAtom
+            color={Colors.orange}
+            name="checkmark"
+            size={50}
+            library="Ionicons"
+          />
         </ButtonAtom>
       </View>
     </View>
@@ -46,21 +51,21 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   collum6: {
-    flex: 6
+    flex: 6,
   },
   right: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 20,
   },
   center: {
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: "center",
+    alignItems: "center",
   },
   confBtn: {
     borderWidth: 3,
     borderRadius: 50,
     padding: 10,
-    borderColor: Colors.orange
-  }
+    borderColor: Colors.orange,
+  },
 });

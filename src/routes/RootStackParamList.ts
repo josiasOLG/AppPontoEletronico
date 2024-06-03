@@ -5,4 +5,8 @@ export type RootStackParamList = {
   Biometric: undefined;
   CameraPoint: { param: any };
   Main: undefined;
+  ModalLocal: {
+    item: any;
+    activeTab: string;
+  };
 };

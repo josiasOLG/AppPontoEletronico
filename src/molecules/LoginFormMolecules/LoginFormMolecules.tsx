@@ -25,7 +25,7 @@ const LoginFormMolecules: React.FC<LoginFormProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.containerHeader}>
-        <TextAtom text="Login" style={styles.login} />
+        <TextAtom text="Login " style={styles.login} />
       </View>
       <View style={styles.containerBody}>
         <View>
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   containerHeader: {
-    flex: 1,
+    flex: 0.6,
     justifyContent: "center",
     alignItems: "center",
   },

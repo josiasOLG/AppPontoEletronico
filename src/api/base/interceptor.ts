@@ -1,8 +1,18 @@
-import axiosInstance from './axiosInstance';
-import HttpStatusCode from '../enums/HttpStatusCode';
-import * as SecureStore from 'expo-secure-store';
-import UserAPI from '../user/userAPI';
-import { getLogin, getPassword, saveToken, saveTokenExpiration } from '../../secure/secureStoreService';
+import axiosInstance from "./axiosInstance";
+import HttpStatusCode from "../enums/HttpStatusCode";
+import * as SecureStore from "expo-secure-store";
+import UserAPI from "../user/userAPI";
+import {
+  getLogin,
+  getPassword,
+  saveToken,
+  saveTokenExpiration,
+} from "../../secure/secureStoreService";
+
+const secureOptions = {
+  requireAuthentication: false,
+  keychainAccessible: SecureStore.ALWAYS_THIS_DEVICE_ONLY,
+};
 
 let isRefreshing = false;
 
@@ -11,21 +21,24 @@ const refreshToken = async () => {
   isRefreshing = true;
   try {
     const [username, password] = await Promise.all([getLogin(), getPassword()]);
-    const { Token, Expiration } = await UserAPI.getInstance().login(username, password);
+    const { Token, Expiration } = await UserAPI.getInstance().login(
+      username,
+      password
+    );
     // console.log('Token:',Token);
     await Promise.all([saveToken(Token), saveTokenExpiration(Expiration)]);
-    axiosInstance.defaults.headers['Authorization'] = `Bearer ${Token}`;
+    axiosInstance.defaults.headers["Authorization"] = `Bearer ${Token}`;
   } catch (error) {
-    console.error('Failed to refresh token:', error);
+    console.error("Failed to refresh token:", error);
   } finally {
     isRefreshing = false;
   }
 };
 
 const setAuthorizationHeader = async (config) => {
-  const token = await SecureStore.getItemAsync('accessToken');
-  config.headers['Content-Type'] = 'application/json; charset=utf-8';
-  if (token) config.headers['Authorization'] = `Bearer ${token}`;
+  const token = await SecureStore.getItemAsync("accessToken", secureOptions);
+  config.headers["Content-Type"] = "application/json; charset=utf-8";
+  if (token) config.headers["Authorization"] = `Bearer ${token}`;
   return config;
 };
 
@@ -38,12 +51,20 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if ((error.response?.status === HttpStatusCode.UNAUTHORIZED || error.response?.status === HttpStatusCode.NOT_FOUND) && !originalRequest._retry) {
+    if (
+      (error.response?.status === HttpStatusCode.UNAUTHORIZED ||
+        error.response?.status === HttpStatusCode.NOT_FOUND) &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
       try {
-       
         await refreshToken();
-        originalRequest.headers['Authorization'] = `Bearer ${await SecureStore.getItemAsync('accessToken')}`;
+        originalRequest.headers[
+          "Authorization"
+        ] = `Bearer ${await SecureStore.getItemAsync(
+          "accessToken",
+          secureOptions
+        )}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         console.error(refreshError);
@@ -55,9 +76,12 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-axiosInstance.interceptors.request.use(config => {
-  if (config.method === 'get') {
-    config.params = { ...config.params, _t: new Date().getTime() };
-  }
-  return config;
-}, error => Promise.reject(error));
+axiosInstance.interceptors.request.use(
+  (config) => {
+    if (config.method === "get") {
+      config.params = { ...config.params, _t: new Date().getTime() };
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);

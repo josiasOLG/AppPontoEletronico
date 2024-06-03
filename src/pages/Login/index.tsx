@@ -1,6 +1,5 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
-import { Formik, FormikProps } from "formik";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -9,12 +8,18 @@ import { loginRequest, loginSuccess } from "../../redux/actions/loginActions";
 import UserAPI from "../../api/user/userAPI";
 import { showErrorToast } from "../../redux/actions/error.actions";
 import LoginSectionMolecules from "../../organisms/LoginSectionOrganisms/LoginSectionOrganisms";
-import { saveLogin, savePassword, saveProfile, saveToken, saveTokenExpiration } from "../../secure/secureStoreService";
+import {
+  saveLogin,
+  savePassword,
+  saveProfile,
+  saveToken,
+  saveTokenExpiration,
+} from "../../secure/secureStoreService";
 import LoadingLogin from "./LoadingLogin/LoadingLogin";
 import Login from "./Login";
 
 type RootStackParamList = {
-  Home: undefined;
+  Main: undefined;
   Login: undefined;
 };
 
@@ -43,12 +48,14 @@ const LoginIndex: React.FC<Props> = ({ navigation }) => {
   const handleLoginEnd = (success: boolean) => {
     setIsLoggingIn(false);
     if (success) {
-      navigation.navigate('Home');
+      navigation.navigate("Main");
     }
   };
 
-  return (
-    isLoggingIn ? <LoadingLogin /> : <Login onLoginBegin={handleLoginBegin} onLoginEnd={handleLoginEnd} />
+  return isLoggingIn ? (
+    <LoadingLogin />
+  ) : (
+    <Login onLoginBegin={handleLoginBegin} onLoginEnd={handleLoginEnd} />
   );
 };
 

@@ -5,7 +5,11 @@ import ButtonAtom from "../../atoms/ButtonAtom/ButtonAtom";
 import TextAtom from "../../atoms/TextAtom/TextAtom";
 import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "../../styles";
-import { formatarData2 } from "../../Utils/Utils";
+import { formatarData2, remFontSize } from "../../Utils/Utils";
+import AlarmeSVG from "../../atoms/SVG/AlarmeSvg";
+import RelogioSvg from "../../atoms/SVG/RelogioSvg";
+import EntrarSvg from "../../atoms/SVG/EntrarSvg";
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 
 type ListItemProps = {
   item: any;
@@ -26,137 +30,229 @@ const ListItemMolecules: React.FC<ListItemProps> = ({
     const minutes = String(date.getMinutes()).padStart(2, "0");
     return `${hours}:${minutes}`;
   };
-  const isDisabled = item.BateuPonto === 1;
+
+  const isDisabled = item.BateuPonto === true;
+
   const linearGradientColors = isDisabled
     ? [Colors.purple, Colors.purple]
     : [Colors.white, Colors.white];
 
-  // console.log(item);
+  let color;
+
+  if (activeTab === "Entrada") {
+    color = Colors.blueDark;
+  } else if (activeTab === "Saida") {
+    color = Colors.red;
+  } else if (activeTab === "Folga") {
+    color = Colors.purple;
+  } else {
+    // Cor padrão se nenhuma das condições acima for verdadeira
+    color = Colors.blueDark;
+  }
 
   return (
-    <ButtonAtom
-      onPress={() => {
-        if (!isDisabled) {
-          onOptionClick(item);
-        }
-      }}
-      disabled={isDisabled}
-    >
-      <LinearGradient
-        colors={linearGradientColors}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.listItem}
-      >
-        <View>
-          <TextAtom
+    <View style={[styles.listItem, { borderColor: color }]}>
+      <View style={styles.flexBody}>
+        <View style={styles.flexContainer}>
+          <Text
             style={styles.listItemText}
-            text={
-              item.LocalEntradaProgramado
-                ? "Local: " + item.LocalEntradaProgramado
-                : item.Descricao === "folga"
-                ? "Dia de folga"
-                : ""
-            }
-          />
-          <View style={styles.textoItem}>
+            adjustsFontSizeToFit
+            numberOfLines={1}
+          >
+            Serviço: {item.ServicoEscala?.NomeServico}
+          </Text>
+          <Text
+            adjustsFontSizeToFit
+            numberOfLines={1}
+            style={styles.listItemText}
+          >
+            Carro: {item.ServicoEscala?.NomeServico}
+          </Text>
+        </View>
+        <View style={styles.flexContainer}>
+          <Text style={styles.localText}>
+            <Text
+              adjustsFontSizeToFit
+              numberOfLines={1}
+              style={styles.boldText}
+            >
+              Local:
+            </Text>{" "}
+            {item?.Perimetro?.Nome}
+          </Text>
+        </View>
+      </View>
+      <View style={styles.icons}>
+        <View style={styles.flexText}>
+          <View style={styles.col12}>
             {activeTab == "Entrada" && (
-              <>
-                <Text style={styles.listItemSubText}>
-                  {`Hora inicio: ${formatTime(item.HoraInicioProgramada)}`}
-                </Text>
-                <Text style={styles.listItemSubTextEnd}>
-                  {`Data entrada: ${formatarData2(
-                    new Date(item.HoraInicioProgramada)
-                  )}`}
-                </Text>
-              </>
+              <View style={styles.flexContainer}>
+                <View style={styles.iconWithText}>
+                  <AlarmeSVG width={20} height={20} color={color} />
+                  <Text
+                    adjustsFontSizeToFit
+                    numberOfLines={1}
+                    style={styles.iconText}
+                  >
+                    {formatarData2(new Date(item.HoraInicioProgramada))}
+                  </Text>
+                </View>
+                <View style={styles.iconWithText}>
+                  <RelogioSvg width={20} height={20} color={color} />
+                  <Text
+                    adjustsFontSizeToFit
+                    numberOfLines={1}
+                    style={styles.iconText}
+                  >
+                    {formatTime(item.HoraInicioProgramada)}
+                  </Text>
+                </View>
+              </View>
             )}
 
             {activeTab == "Folga" && (
               <>
-                <Text style={styles.listItemSubText}>
-                  {`Hora inicio: ${formatTime(item.DataFolgaProgramada)}`}
-                </Text>
-                <Text style={styles.listItemSubTextEnd}>
-                  {`Data folga: ${formatarData2(
-                    new Date(item.DataFolgaProgramada)
-                  )}`}
-                </Text>
+                <View style={styles.flexContainer}>
+                  <View style={styles.iconWithText}>
+                    <AlarmeSVG width={20} height={20} color={color} />
+                    <Text
+                      adjustsFontSizeToFit
+                      numberOfLines={1}
+                      style={styles.iconText}
+                    >
+                      {formatarData2(new Date(item.DataFolgaProgramada))}
+                    </Text>
+                  </View>
+                  <View style={styles.iconWithText}>
+                    <RelogioSvg width={20} height={20} color={color} />
+                    <Text
+                      adjustsFontSizeToFit
+                      numberOfLines={1}
+                      style={styles.iconText}
+                    >
+                      {formatTime(item.DataFolgaProgramada)}
+                    </Text>
+                  </View>
+                </View>
               </>
             )}
 
             {activeTab == "Saida" && (
               <>
-                <Text style={styles.listItemSubText}>
-                  {`Hora inicio: ${formatTime(item.HoraFimProgramada)}`}
-                </Text>
-                <Text style={styles.listItemSubTextEnd}>
-                  {`Data Saida: ${formatarData2(
-                    new Date(item.HoraFimProgramada)
-                  )}`}
-                </Text>
+                <View style={styles.flexContainer}>
+                  <View style={styles.iconWithText}>
+                    <AlarmeSVG width={20} height={20} color={color} />
+                    <Text
+                      adjustsFontSizeToFit
+                      numberOfLines={1}
+                      style={styles.iconText}
+                    >
+                      {formatarData2(new Date(item.HoraFimProgramada))}
+                    </Text>
+                  </View>
+                  <View style={styles.iconWithText}>
+                    <RelogioSvg width={20} height={20} color={color} />
+                    <Text
+                      adjustsFontSizeToFit
+                      numberOfLines={1}
+                      style={styles.iconText}
+                    >
+                      {formatTime(item.HoraFimProgramada)}
+                    </Text>
+                  </View>
+                </View>
+              </>
+            )}
+          </View>
+          <View style={styles.col12}>
+            {!isDisabled && (
+              <>
+                <ButtonAtom
+                  onPress={() => {
+                    onOptionClick(item);
+                  }}
+                  style={[styles.btn, { backgroundColor: color }]}
+                >
+                  <EntrarSvg />
+                </ButtonAtom>
               </>
             )}
           </View>
         </View>
-        <View style={styles.icons}>
-          {/* {(!isDisabled && 
-            <ButtonAtom
-              style={styles.optionButton}
-              onPress={() => handleOptionClick(item)}
-            >
-              <IconAtom
-                name="card-outline"
-                size={24}
-                color={Colors.black}
-                library="Ionicons"
-              />
-            </ButtonAtom>
-          )} */}
-        </View>
-      </LinearGradient>
-    </ButtonAtom>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  flexBody: {
+    flex: 2,
+  },
+  icons: {
+    flex: 1,
+    borderLeftWidth: 2,
+    paddingLeft: 10,
+  },
+  flexContainer: {
+    flex: 1,
+    gap: 10,
+  },
+  flexText: { flex: 1 },
+  iconWithText: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginRight: 8,
+  },
+  iconText: {
+    marginLeft: 4,
+  },
   listItem: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     padding: 16,
     backgroundColor: "# ",
-    borderBottomWidth: 2,
-    borderBottomColor: Colors.red,
+    borderWidth: 3,
+    borderColor: Colors.red,
     marginBottom: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    borderRadius: 10,
+  },
+  listItemActive: {
+    backgroundColor: "red",
   },
   textoItem: {
     flex: 1,
   },
   listItemText: {
     color: Colors.black,
-    fontSize: 16,
     fontWeight: "900",
   },
   listItemSubText: {
     color: Colors.black,
-    fontSize: 12,
-    marginVertical: 5,
+    marginTop: 10,
   },
   listItemSubTextEnd: {
     color: Colors.black,
-    fontSize: 12,
   },
-  icons: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
+  boldText: { fontWeight: "700" },
   optionButton: {
     padding: 10,
   },
+  localText: { marginTop: 10 },
+  btn: {
+    width: 35,
+    height: 35,
+    backgroundColor: Colors.red,
+    position: "absolute",
+    right: -18,
+    bottom: -18,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    borderTopLeftRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  col12: { flex: 1 },
 });
 
 export default ListItemMolecules;

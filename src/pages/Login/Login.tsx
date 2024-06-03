@@ -19,7 +19,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type RootStackParamList = {
-  Home: undefined;
+  Main: undefined;
   Login: undefined;
 };
 

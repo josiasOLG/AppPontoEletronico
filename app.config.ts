@@ -1,23 +1,27 @@
 const environments = {
-  "localhost": {
+  localhost: {
     apiUrl: "http://192.168.1.7:5000",
-    environment: 'localhost',
+    environment: "localhost",
   },
-  "dev": {
+  dev: {
     apiUrl: "http://api.trucogolds.info/api",
-    environment: 'dev',
+    environment: "dev",
   },
-  "uat": {
+  uat: {
     apiUrl: "http://api.trucogolds.info/api",
-    environment: 'uat',
+    environment: "uat",
   },
-  "prod": {
+  prod: {
     apiUrl: "http://api.trucogolds.info/api",
-    environment: 'prod',
+    environment: "prod",
   },
 } as const;
+
 const env: string = (process.env.EXPO_ENV || "localhost").trim();
-let selectedEnvironment: typeof environments[keyof typeof environments] | undefined;
+let selectedEnvironment:
+  | (typeof environments)[keyof typeof environments]
+  | undefined;
+
 if (environments[env as keyof typeof environments]) {
   selectedEnvironment = environments[env as keyof typeof environments];
 }
@@ -30,54 +34,69 @@ const config = {
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
   plugins: [
+    "expo-secure-store",
     [
       "expo-local-authentication",
       {
-        faceIDPermission: "Allow $(PRODUCT_NAME) to use Face ID."
-      }
+        faceIDPermission: "Allow $(PRODUCT_NAME) to use Face ID.",
+      },
     ],
     [
       "expo-build-properties",
       {
-        android: {
-          usesCleartextTraffic: true
-        },
+        android: {},
         ios: {
-          deploymentTarget: "13.0"
-        }
-      }
-    ]
+          deploymentTarget: "13.4",
+        },
+      },
+    ],
+    [
+      "expo-camera",
+      {
+        cameraPermission: "Allow $(PRODUCT_NAME) to access your camera",
+        microphonePermission: "Allow $(PRODUCT_NAME) to access your microphone",
+        recordAudioAndroid: true,
+      },
+    ],
   ],
   splash: {
     image: "./assets/splash.png",
     resizeMode: "contain",
-    backgroundColor: "#20B2AA"
+    backgroundColor: "#20B2AA",
   },
   extra: {
     ...selectedEnvironment,
     eas: {
-      projectId: "11f0d330-6ca1-48e1-8e1a-f75f39d6de9d"
-    }
+      projectId: "11f0d330-6ca1-48e1-8e1a-f75f39d6de9d",
+    },
   },
   assetBundlePatterns: ["**/*"],
   ios: {
     supportsTablet: true,
-    bundleIdentifier: 'com.suaempresa.pontoeletronico',
+    bundleIdentifier: "com.suaempresa.pontoeletronico",
     infoPlist: {
-      NSFaceIDUsageDescription: "Esse aplicativo usa o Face ID para garantir uma experiência segura."
-    }
+      NSFaceIDUsageDescription:
+        "Esse aplicativo usa o Face ID para garantir uma experiência segura.",
+    },
   },
   android: {
-    package: 'com.suaempresa.pontoeletronico',
+    package: "com.suaempresa.pontoeletronico",
     adaptiveIcon: {
       foregroundImage: "./assets/icon.png",
-      backgroundColor: "#20B2AA"
+      backgroundColor: "#20B2AA",
     },
-    usesCleartextTraffic: true
+    usesCleartextTraffic: true,
+    config: {
+      googleMaps: {
+        apiKey: "AIzaSyDn5nUDUhWfFGzi72PRx5TsMtLYop8-owQ",
+      },
+    },
+    // Adicione a configuração do Hermes aqui
+    jsEngine: "hermes",
   },
   web: {
-    favicon: "./assets/favicon.png"
-  }
+    favicon: "./assets/favicon.png",
+  },
 };
 
 export default config;

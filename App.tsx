@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Provider } from "react-redux";
 import {
   StyleSheet,
@@ -6,25 +6,19 @@ import {
   TextProps as RNTextProps,
   View,
 } from "react-native";
-import Routes from "./src/routes/Routes";
 import store from "./src/redux/store/storeConfig";
-import SplashScreen from "./src/atoms/SplashScreen/SplashScreen";
-import {
-  checkIfLoggedInBefore,
-  authenticate,
-} from "./src/biometric/BiometricAuth";
+import { checkIfLoggedInBefore } from "./src/biometric/BiometricAuth";
 import { useFonts, Roboto_400Regular } from "@expo-google-fonts/roboto";
 import "./src/api";
 import { initDatabases } from "./src/database";
 import CustomToast from "./src/atoms/CustomToastAtom/CustomToastAtom";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NavigationService from "./src/routes/NavigationService";
-import { syncData } from "./src/database/sync/SyncService";
-import { logError } from "./src/database/tables/LogErro";
 import useLocation from "./src/hook/useLocation";
 import { saveLocation } from "./src/secure/secureStoreService";
 import AppContent from "./AppContent";
 import moment from "moment-timezone";
+import { globalErrorHandler } from "./src/api/base/handleAxiosError";
 
 moment.tz.setDefault("America/Sao_Paulo");
 
@@ -40,15 +34,6 @@ export default function App() {
   const [animationDone, setAnimationDone] = useState(false);
   const [hasLoggedInBefore, setHasLoggedInBefore] = useState(false);
   const { location } = useLocation();
-
-  const globalErrorHandler = (error: any, isFatal: any) => {
-    // console.log("Erro capturado globalmente:", error, isFatal);
-    logError(
-      isFatal ? "Fatal Error" : "Non-Fatal Error",
-      error.message,
-      error.stack
-    );
-  };
 
   ErrorUtils.setGlobalHandler(globalErrorHandler);
 

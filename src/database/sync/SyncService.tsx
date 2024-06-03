@@ -21,41 +21,13 @@ export const syncData = async (userData: any) => {
       profile.firstName,
       encodeURIComponent(dateForAPI)
     );
+    console.log("id > ", id);
+    console.log(
+      "encodeURIComponent(dateForAPI) > ",
+      encodeURIComponent(dateForAPI)
+    );
     const data = response;
 
-    // Vinculando DataEntradaProgramada e HoraInicioProgramada de EscalaMotoristaEntrada a EscalaMotoristaSaida
-    // data.EscalaMotoristasDTO.EscalaMotoristaEntrada.forEach((entrada) => {
-    //   const saidasCorrespondentes = data.EscalaMotoristasDTO.EscalaMotoristaSaida.filter(
-    //     (saida) => saida.EmployeeId === entrada.EmployeeId
-    //   );
-    //   data.EscalaMotoristasDTO.EscalaMotoristaEntrada.forEach((saidaCorrespondente) => {
-    //     saidaCorrespondente.DataEntradaProgramada = entrada.DataEntradaProgramada;
-    //     saidaCorrespondente.HoraInicioProgramada = entrada.HoraInicioProgramada;
-    //   });
-    // });
-    
-    // // Vinculando DataSaidaProgramada e HoraFimProgramada de EscalaMotoristaSaida a EscalaMotoristaEntrada
-    // data.EscalaMotoristasDTO.EscalaMotoristaSaida.forEach((saida) => {
-    //   const entradasCorrespondentes = data.EscalaMotoristasDTO.EscalaMotoristaEntrada.filter(
-    //     (entrada) => entrada.EmployeeId === saida.EmployeeId
-    //   );
-    //   data.EscalaMotoristasDTO.EscalaMotoristaSaida.forEach((entradaCorrespondente) => {
-    //     entradaCorrespondente.DataSaidaProgramada = saida.DataSaidaProgramada;
-    //     entradaCorrespondente.HoraFimProgramada = saida.HoraFimProgramada;
-    //   });
-    // });
-
-    // // Vinculando DataSaidaProgramada e HoraFimProgramada de EscalaMotoristaSaida a EscalaMotoristaEntrada
-    // data.EscalaMotoristasDTO.EscalaMotoristaFolga.forEach((saida) => {
-    //   const entradasCorrespondentes = data.EscalaMotoristasDTO.EscalaMotoristaEntrada.filter(
-    //     (entrada) => entrada.EmployeeId === saida.EmployeeId
-    //   );
-    //   data.EscalaMotoristasDTO.EscalaMotoristaFolga.forEach((entradaCorrespondente) => {
-    //     entradaCorrespondente.DataFolgaProgramada = saida.DataFolgaProgramada;
-    //     entradaCorrespondente.HoraFolgaProgramada = saida.DataFolgaProgramada;
-    //   });
-    // });
-    
     const processItems = async (items: any[]) => {
       const promises = items.map(async (item) => {
         const commonData = buildCommonData(item);
@@ -96,7 +68,7 @@ const buildCommonData = (item: any) => {
     Id: id,
     Descricao: descricao,
     BateuPonto: item.BateuPonto || false,
-    DataEntradaProgramada:item.DataEntradaProgramada,
+    DataEntradaProgramada: item.DataEntradaProgramada,
     HoraInicioProgramada: item.HoraInicioProgramada,
     DataSaidaProgramada: item.DataSaidaProgramada,
     HoraFimProgramada: item.HoraFimProgramada,
@@ -132,8 +104,15 @@ export const fetchAllFromService = async () => {
 
 export const fetchAllFromServiceNome = async (nome: string): Promise<any> => {
   try {
-    const escalasMotoristas = await fetchEscalasMotoristasByNome(nome);
-    return escalasMotoristas;
+    console.log(nome);
+    switch (nome) {
+      case "entrada":
+        return await fetchEscalasMotoristasByNome(nome);
+      case "saida":
+        return await fetchEscalasMotoristasByNome(nome);
+      default:
+        return await fetchEscalasMotoristasByNome(nome);
+    }
   } catch (error) {
     console.error("Erro ao buscar escalas dos motoristas:", error);
     throw error;

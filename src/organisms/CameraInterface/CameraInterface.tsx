@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   contentBtn: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: 20,
   },
   camera: {

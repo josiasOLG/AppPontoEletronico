@@ -13,7 +13,7 @@ const Biometric: React.FC = () => {
       const authResult = await authenticate();
       // console.log(authResult);
       if (authResult) {
-        NavigationService.navigate("Home");
+        NavigationService.navigate("Main");
       }
     } catch (e: any) {
       // console.log(e);

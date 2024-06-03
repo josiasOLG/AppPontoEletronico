@@ -1,7 +1,7 @@
 export interface EscalaMotoristaEntradaDTO {
   Descricao: string;
   BateuPonto: boolean;
-  DataEntradaProgramada: string;
+  DataEntradaProgramada?: string;
   HoraInicioProgramada: string;
   EmployeeId: string;
   LocalEntradaProgramadoId: string;

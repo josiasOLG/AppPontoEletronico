@@ -52,8 +52,6 @@ const LatePointEntry: React.FC<LatePointEntryProps> = ({
     }
   }, [location]);
 
-
-
   const handleSync = useCallback(async () => {
     try {
       const syncResult = await syncData(userData);
@@ -64,7 +62,7 @@ const LatePointEntry: React.FC<LatePointEntryProps> = ({
             "Dados sincronizados com sucesso!"
           )
         );
-        NavigationService.navigate("Home");
+        NavigationService.navigate("Main");
       } else {
         dispatch(showErrorToast("Sincronização falhou", syncResult.message));
       }
@@ -75,23 +73,20 @@ const LatePointEntry: React.FC<LatePointEntryProps> = ({
 
   const validateCode = async (codigo: string) => {
     const data = {
-      PermissaoBatePonto: codigo
+      PermissaoBatePonto: codigo,
     };
-    RegisterLaterAPI.getInstance().VerifyCodPermPoint(data).then(
-      (sucess: any) => {
-        if( 
-          sucess.IsValid == true 
-        ){
+    RegisterLaterAPI.getInstance()
+      .VerifyCodPermPoint(data)
+      .then((sucess: any) => {
+        if (sucess.IsValid == true) {
           setIsCodeValid(codigo);
-        }else{
+        } else {
           dispatch(showErrorToast("Atenção", sucess.Message));
         }
-      }
-    ).catch(
-      (error) => {
+      })
+      .catch((error) => {
         dispatch(showErrorToast("Atenção", error.message));
-      }
-    )
+      });
   };
 
   const handleOnPress = (handleSubmit: () => void) => () => {

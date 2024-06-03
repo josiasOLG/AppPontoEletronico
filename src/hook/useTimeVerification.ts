@@ -1,12 +1,11 @@
-import { useState } from 'react';
-import verifyHorsAPI from '../api/camera/verifyHors';
-import { getLocation, getLogin } from '../secure/secureStoreService';
-import { PontoEletronicoDTO } from '../api/dtos/PontoEletronicoDTO';
-import CameraAPI from '../api/camera/cameraAPI';
-import moment from 'moment-timezone';
-import { hideLoading, showLoading } from '../redux/actions/loadingActions';
-import { converterParaISO } from '../Utils/Utils';
-
+import { useState } from "react";
+import verifyHorsAPI from "../api/camera/verifyHors";
+import { getLocation, getLogin } from "../secure/secureStoreService";
+import { PontoEletronicoDTO } from "../api/dtos/PontoEletronicoDTO";
+import CameraAPI from "../api/camera/cameraAPI";
+import moment from "moment-timezone";
+import { hideLoading, showLoading } from "../redux/actions/loadingActions";
+import { converterParaISO } from "../Utils/Utils";
 
 /**
  * Hook personalizado para verificação da hora e registro de ponto.
@@ -16,7 +15,13 @@ import { converterParaISO } from '../Utils/Utils';
  * @param {Object} param - Parâmetros adicionais.
  * @returns {Object} Funções de verificação e registro.
  */
-export const useTimeVerification = (motoristaData, imagem, param, onSuccess, dispatch) => {
+export const useTimeVerification = (
+  motoristaData,
+  imagem,
+  param,
+  onSuccess,
+  dispatch
+) => {
   const TIME_THRESHOLD = 5 * 60 * 1000; // 5 minutos em milissegundos
 
   /**
@@ -26,7 +31,10 @@ export const useTimeVerification = (motoristaData, imagem, param, onSuccess, dis
   const checkTime = async () => {
     try {
       const currentTimeString = await verifyHorsAPI.verifyTime();
-      const dateTimeInSaoPaulo = moment.tz(currentTimeString, "America/Sao_Paulo");
+      const dateTimeInSaoPaulo = moment.tz(
+        currentTimeString,
+        "America/Sao_Paulo"
+      );
       return dateTimeInSaoPaulo.toDate(); // Converte para um objeto Date
     } catch (error) {
       console.error("Erro ao obter a hora:", error);
@@ -43,34 +51,43 @@ export const useTimeVerification = (motoristaData, imagem, param, onSuccess, dis
       dispatch(showLoading());
       const location = await getLocation();
       const login = await getLogin();
-      let currentTime = moment.tz('America/Sao_Paulo').toISOString();
+
+      let currentTime = moment.tz("America/Sao_Paulo").toISOString();
+      console.log(motoristaData);
       let data: PontoEletronicoDTO = {
-        EscalaMotoristaId: motoristaData.Id,
+        EscalaMotoristaId: motoristaData?.Id,
         Latitude: location?.latitude,
         Longitude: location?.longitude,
         CurrentTime: converterParaISO(moment().format()),
-        DataEntrada: motoristaData?.HoraInicioProgramada ? converterParaISO(motoristaData?.HoraInicioProgramada) :  converterParaISO(motoristaData?.HoraFimProgramada),
-        DataSaida: motoristaData?.HoraFimProgramada ? converterParaISO(motoristaData?.HoraFimProgramada) :  converterParaISO(motoristaData?.HoraInicioProgramada),
+        DataEntrada: motoristaData?.HoraInicioProgramada
+          ? converterParaISO(motoristaData?.HoraInicioProgramada)
+          : converterParaISO(motoristaData?.HoraFimProgramada),
+        DataSaida: motoristaData?.HoraFimProgramada
+          ? converterParaISO(motoristaData?.HoraFimProgramada)
+          : converterParaISO(motoristaData?.HoraInicioProgramada),
         Tipo: "Data" + param.activeTab,
         EmployeeId: motoristaData.EmployeeId,
         LocalSaidaProgramadoId: motoristaData.LocalEntradaProgramadoId,
         Digital: "1",
-        Foto: imagem, 
+        Foto: imagem,
         CodigoFuncionario: login,
       };
       console.log(data);
-      await CameraAPI.getInstance().registerPoint(data).then(
-        () => {dispatch(hideLoading());}
-      );
+      await CameraAPI.getInstance()
+        .registerPoint(data)
+        .then(() => {
+          dispatch(hideLoading());
+        });
       if (onSuccess) {
         onSuccess();
       }
-      
     } catch (error) {
       dispatch(hideLoading());
       console.log("ERROR>>", error);
     }
   };
 
-  return { checkTime, register };
+  const selectMetodo = () => {};
+
+  return { checkTime, register, selectMetodo };
 };

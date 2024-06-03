@@ -8,6 +8,7 @@ import {
   ScrollView,
   SafeAreaView,
   Dimensions,
+  StatusBar,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import StatusBarAtoms from "../../atoms/StatusBar/StatusBar";
@@ -30,14 +31,23 @@ import IconAtom from "../../atoms/IconAtom/IconAtom";
 import { useFocusEffect } from "@react-navigation/native";
 import { setMotoristaData } from "../../redux/actions/motoristaActions";
 import { Colors } from "../../styles";
-import { ordenarPorDatasProximas } from "../../Utils/Utils";
+import {
+  getCurrentMonthFirstDay,
+  getCurrentMonthFirstDay2,
+  ordenarPorDatasProximas,
+  remFontSize,
+} from "../../Utils/Utils";
 import TextAtom from "../../atoms/TextAtom/TextAtom";
+import { getProfile } from "../../secure/secureStoreService";
+import HomeAPI from "../../api/motorista/HomeAPI";
+import ModalLocal from "../Local/Modal/ModalLocal";
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 
 type RootStackParamList = {
-  Home: undefined;
+  Main: undefined;
 };
 
-type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
+type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, "Main">;
 
 type Props = {
   navigation: HomeScreenNavigationProp;
@@ -46,17 +56,28 @@ const { width, height } = Dimensions.get("window");
 
 const Home: React.FC<Props> = () => {
   const [activeTab, setActiveTab] = useState("Entrada");
+  const [selectedMotorista, setSelectedMotorista] = useState(null);
   const [escalaMotorista, setEscalaMotorista] = useState(null);
   const userData = useSelector((state: any) => state.login.userData);
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalLocalVisible, setModalLocalVisible] = useState(false);
   const [dataSynced, setDataSynced] = useState(false);
-
+  const baseWidth = 375;
+  const baseFontSize = 16;
   const dispatch = useDispatch();
 
   const updateDataBasedOnTab = useCallback(async () => {
     try {
-      let data = await fetchAllFromServiceNome(activeTab.toLowerCase());
-      data = ordenarPorDatasProximas(data);
+      const profile = await getProfile();
+      const id = profile?.id;
+      const dateForAPI = getCurrentMonthFirstDay2();
+      let data = await HomeAPI.getInstance().fetchAllFromServiceNomeHomeAPI(
+        activeTab.toLowerCase(),
+        id,
+        profile.firstName,
+        encodeURIComponent(dateForAPI)
+      );
+      data = ordenarPorDatasProximas(data, activeTab.toLowerCase());
       setEscalaMotorista(data);
     } catch (error: any) {
       dispatch(
@@ -67,7 +88,12 @@ const Home: React.FC<Props> = () => {
 
   const handlerClickDetails = (item: any) => {
     dispatch(setMotoristaData(item));
-    NavigationService.navigate("Details", { param: activeTab });
+    // setSelectedMotorista(item);
+    // setModalLocalVisible(true);
+    NavigationService.navigate("ModalLocal", {
+      item: item,
+      activeTab: activeTab,
+    });
   };
 
   useFocusEffect(
@@ -106,10 +132,6 @@ const Home: React.FC<Props> = () => {
           setModalVisible={() => setModalVisible(!modalVisible)}
         />
         <View style={styles.containerScroll}>
-          <StatusBarAtoms
-            backgroundColor="transparent"
-            barStyle="dark-content"
-          />
           <LinearGradient
             colors={["#34AADC", "#0A617C", "#007AFF"]}
             start={{ x: 0, y: 0 }}
@@ -120,11 +142,16 @@ const Home: React.FC<Props> = () => {
           </LinearGradient>
           <View style={styles.contentBody}>
             <View style={styles.center}>
-              <SyncMolecules handleSync={handleSync} />
+              {/* <SyncMolecules handleSync={handleSync} /> */}
             </View>
 
             <View style={styles.contentTilte}>
-              <TextAtom style={styles.title} text={"Escala programa"} />
+              <TextAtom
+                adjustsFontSizeToFit
+                numberOfLines={1}
+                style={styles.title}
+                text={"Escala programa"}
+              />
             </View>
             <View style={styles.containerFooter}>
               <View
@@ -162,14 +189,16 @@ const Home: React.FC<Props> = () => {
                 </TouchableOpacity>
               </View>
             </View>
-            <ItemListOrganism
-              data={escalaMotorista}
-              activeTab={activeTab}
-              handleItemClick={(item) => handlerClickDetails(item)}
-              handleOptionClick={(item: any) => {
-                setModalVisible(true);
-              }}
-            />
+            <View style={styles.containerList}>
+              <ItemListOrganism
+                data={escalaMotorista}
+                activeTab={activeTab}
+                handleItemClick={(item) => handlerClickDetails(item)}
+                handleOptionClick={(item: any) => {
+                  // setModalVisible(true);
+                }}
+              />
+            </View>
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -180,7 +209,6 @@ const Home: React.FC<Props> = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
   },
   center: {
     justifyContent: "center",
@@ -188,7 +216,6 @@ const styles = StyleSheet.create({
   },
   containerScroll: {
     flex: 1,
-    backgroundColor: Colors.white,
   },
   contentBody: {
     flex: 2,
@@ -207,16 +234,20 @@ const styles = StyleSheet.create({
     paddingTop: height * 0.02, // 2% da altura da tela
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 40,
+    marginTop: 0,
   },
   containerFooter: {
     flex: 1,
     marginTop: 20,
   },
+  containerList: {
+    flex: 5,
+    height: 5,
+  },
   title: {
     color: Colors.black,
     fontWeight: "900",
-    fontSize: 32, // Tamanho menor da fonte para telas pequenas
+    fontSize: RFPercentage(3),
     textTransform: "uppercase",
   },
   footerTabs: {
@@ -232,7 +263,7 @@ const styles = StyleSheet.create({
   },
   textTab: {
     color: Colors.white,
-    fontSize: 20,
+    fontSize: RFPercentage(3),
   },
   blue: {
     color: Colors.blue,

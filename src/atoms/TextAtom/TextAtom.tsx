@@ -13,7 +13,7 @@ type TextProps = DefaultTextProps & {
 };
 
 const TextAtom: React.FC<TextProps> = ({ text, style, ...props }) => (
-  <Text style={style} {...props}>
+  <Text adjustsFontSizeToFit numberOfLines={1} style={style} {...props}>
     {text}
   </Text> // Aplicando o estilo ao componente Text
 );

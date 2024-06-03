@@ -1,7 +1,7 @@
 import ApiBase from "../ApiBase";
 import UserDTO from "../dtos/UserDTO";
-import Constants from 'expo-constants';
-const environment = Constants.expoConfig?.extra?.environment ?? 'valorPadrao';
+import Constants from "expo-constants";
+const environment = Constants.expoConfig?.extra?.environment ?? "valorPadrao";
 
 export default class UserAPI extends ApiBase {
   private static instance: UserAPI;

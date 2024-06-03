@@ -8,6 +8,7 @@ import { navigationRef } from "./NavigationService";
 import Biometric from "../pages/Biometric/Biometric";
 import CameraPoint from "../pages/Camera/CameraPoint";
 import BottomTabNavigator from "../pages/Tab/BottomTabNavigator";
+import ModalLocal from "../pages/Local/Modal/ModalLocal";
 
 const Stack = createStackNavigator();
 
@@ -53,6 +54,11 @@ export default function Routes() {
           options={getScreenOptions({ showHeader: false })} //Depois de logado
         />
         <Stack.Screen
+          name="ModalLocal"
+          component={ModalLocal}
+          options={getScreenOptions({ showHeader: false })} //Depois de logado
+        />
+        <Stack.Screen
           name="Biometric"
           component={Biometric}
           options={getScreenOptions({ showHeader: false })} //Depois de logado
@@ -65,7 +71,7 @@ export default function Routes() {
         <Stack.Screen
           name="CameraPoint"
           component={CameraPoint}
-          options={getScreenOptions({ theme: "dark" })} //Depois de logado
+          options={getScreenOptions({ theme: "dark", title: "Biometria" })} //Depois de logado
         />
       </Stack.Navigator>
     </NavigationContainer>
